@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nidful/widgets/circle_icon.dart';
 // import 'package:nidful/widgets/bottom_bar.dart';
 
 class ChatPage extends StatefulWidget {
@@ -44,13 +45,45 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Column(
+      body: Stack(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                          bottomLeft: Radius.circular(30),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          TextField(
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
+                          ),
+                          CircleIcon(
+                            icon: Icons.send,
+                            iconSize: 30,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
