@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/screens/notification.dart';
@@ -16,7 +15,6 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   var index = 0;
 
   final screens = [
@@ -32,33 +30,52 @@ class _BottomBarState extends State<BottomBar> {
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       body: screens[index],
-      bottomNavigationBar: CurvedNavigationBar(
-        key: _bottomNavigationKey,
-        animationCurve: Curves.easeInOut,
-        animationDuration: Duration(milliseconds: 500),
-        backgroundColor: Colors.transparent,
-        buttonBackgroundColor: primaryColor,
-        color: primaryColor,
-        height: 50,
-        items: [
-          Icon(
-            Icons.home,
-            color: Colors.white,
-          ),
-          Icon(
-            Icons.explore,
-            color: Colors.white,
-          ),
-          Icon(
-            Icons.notifications,
-            color: Colors.white,
-          ),
-          Icon(
-            Icons.person,
-            color: Colors.white,
-          ),
-        ],
-        onTap: (index) => setState(() => this.index = index),
+      bottomNavigationBar: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          indicatorColor: primaryColor,
+        ),
+        child: NavigationBar(
+          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          animationDuration: Duration(seconds: 2),
+          height: 60,
+          selectedIndex: index,
+          onDestinationSelected: (index) => setState(() => this.index = index),
+          backgroundColor: Colors.white,
+          destinations: [
+            NavigationDestination(
+              icon: Icon(Icons.home),
+              selectedIcon: Icon(
+                Icons.home,
+                color: Colors.white,
+              ),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.explore),
+              selectedIcon: Icon(
+                Icons.explore,
+                color: Colors.white,
+              ),
+              label: 'Explore',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.notifications),
+              selectedIcon: Icon(
+                Icons.notifications,
+                color: Colors.white,
+              ),
+              label: 'Notifications',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person),
+              selectedIcon: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }

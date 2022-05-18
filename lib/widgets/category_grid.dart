@@ -25,25 +25,27 @@ class CategoryWidget extends StatelessWidget {
         Positioned(
           bottom: 10,
           left: 50,
-          child: Container(
-              padding: const EdgeInsets.all(9.0),
-              // alignment: Alignment.bottomCenter,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Container(
-                  width: 90,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.black,
-                  ),
-                  child: Center(
-                    child: Text(
-                      label,
-                      style: TextStyle(color: Colors.white),
+          child: Center(
+            child: Container(
+                padding: const EdgeInsets.all(9.0),
+                // alignment: Alignment.bottomCenter,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Container(
+                    width: 90,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.black,
                     ),
-                  ))),
+                    child: Center(
+                      child: Text(
+                        label,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ))),
+          ),
         ),
       ],
     );

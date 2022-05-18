@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/screens/cat_list.dart';
+import 'package:nidful/screens/message_lists.dart';
 import 'package:nidful/widgets/bottom_bar.dart';
 import 'package:nidful/widgets/category_grid.dart';
 import 'package:nidful/widgets/circle_icon.dart';
@@ -63,8 +64,13 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(
                                 width: 7,
                               ),
-                              CircleIcon(
-                                icon: Icons.message_outlined,
+                              InkWell(
+                                onTap: () {
+                                  Get.to(() => MessageList());
+                                },
+                                child: CircleIcon(
+                                  icon: Icons.message_outlined,
+                                ),
                               )
                             ],
                           ),
