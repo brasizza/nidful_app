@@ -93,11 +93,13 @@ class _LoginPageState extends State<LoginPage> {
                   child: RichText(
                       text: TextSpan(
                     text: 'Don\'t have an account? ',
-                    style: GoogleFonts.workSans(color: Colors.black),
+                    style:
+                        GoogleFonts.workSans(color: Colors.black, fontSize: 10),
                     children: [
                       TextSpan(
                         text: 'Register',
                         style: GoogleFonts.workSans(
+                          fontSize: 10,
                           color: primaryColor,
                           fontWeight: FontWeight.bold,
                         ),
@@ -112,7 +114,8 @@ class _LoginPageState extends State<LoginPage> {
                   child: RichText(
                       text: TextSpan(
                     text: 'Forgot Password ',
-                    style: GoogleFonts.workSans(color: Colors.black),
+                    style:
+                        GoogleFonts.workSans(color: Colors.black, fontSize: 10),
                   )),
                 ),
               ])

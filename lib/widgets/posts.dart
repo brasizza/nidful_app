@@ -25,6 +25,7 @@ class Posts extends StatefulWidget {
 }
 
 class _PostsState extends State<Posts> {
+  var color = Colors.white;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,8 +104,15 @@ class _PostsState extends State<Posts> {
                       children: [
                         Column(
                           children: [
-                            Icon(Icons.thumb_up_off_alt_outlined,
-                                color: Colors.white),
+                            InkWell(
+                              onDoubleTap: () {
+                                setState(() {
+                                  color = Colors.red;
+                                });
+                              },
+                              child: Icon(Icons.thumb_up_off_alt_outlined,
+                                  color: color),
+                            ),
                             Text(
                               widget.likeCount,
                               style: GoogleFonts.workSans(color: Colors.white),

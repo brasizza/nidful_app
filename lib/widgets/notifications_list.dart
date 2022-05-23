@@ -32,7 +32,7 @@ class NotificationsList extends StatelessWidget {
                 ),
                 Text(
                   'John wants to gift you macbook',
-                  style: GoogleFonts.workSans(fontSize: 16),
+                  style: GoogleFonts.workSans(fontSize: 10),
                 ),
               ],
             ),

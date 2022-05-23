@@ -28,7 +28,8 @@ class Messages extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
                       'I\'m almost there. Where are you?',
-                      style: GoogleFonts.workSans(fontWeight: FontWeight.w500),
+                      style: GoogleFonts.workSans(
+                          fontWeight: FontWeight.w500, fontSize: 10),
                     ),
                   ),
                 ],

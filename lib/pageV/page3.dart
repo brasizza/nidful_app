@@ -39,7 +39,7 @@ class Page3 extends StatelessWidget {
           child: Button(
             label: 'Get Started',
             width: 400,
-            height: 60,
+            height: 40,
           ),
         ),
         SizedBox(
@@ -53,7 +53,7 @@ class Page3 extends StatelessWidget {
             },
             child: Container(
               width: 400,
-              height: 60,
+              height: 40,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: primaryColor),

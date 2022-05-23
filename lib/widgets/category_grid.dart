@@ -24,7 +24,7 @@ class CategoryWidget extends StatelessWidget {
         ),
         Positioned(
           bottom: 10,
-          left: 50,
+          left: 40,
           child: Center(
             child: Container(
                 padding: const EdgeInsets.all(9.0),
