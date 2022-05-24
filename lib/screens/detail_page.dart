@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nidful/resources/firestore_methods.dart';
 import 'package:nidful/screens/profile_page.dart';
 import 'package:nidful/widgets/follow_button.dart';
 import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class DetailPage extends StatefulWidget {
-  final String title;
+  final snap;
 
-  const DetailPage({Key? key, required this.title}) : super(key: key);
+  const DetailPage({Key? key, required this.snap}) : super(key: key);
 
   @override
   State<DetailPage> createState() => _DetailPageState();
@@ -39,7 +40,7 @@ class _DetailPageState extends State<DetailPage> {
         ),
         centerTitle: true,
         title: Text(
-          widget.title,
+          widget.snap['title'],
           style: GoogleFonts.workSans(
             color: Colors.black,
             fontWeight: FontWeight.w500,
@@ -73,7 +74,7 @@ class _DetailPageState extends State<DetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'John Doe',
+                              widget.snap['username'],
                               style: GoogleFonts.workSans(
                                   fontWeight: FontWeight.w500),
                             ),
@@ -92,7 +93,10 @@ class _DetailPageState extends State<DetailPage> {
                 Center(
                   child: Column(
                     children: [
-                      Image.asset('assets/p.png'),
+                      ClipRRect(
+                        child: Image.network(widget.snap['postUrl']),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.5),
@@ -105,8 +109,26 @@ class _DetailPageState extends State<DetailPage> {
                               children: [
                                 Column(
                                   children: [
-                                    Icon(Icons.thumb_up_off_alt_outlined),
-                                    Text('901k'),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await FireStoreMethods().likeProduct(
+                                            widget.snap['postId'],
+                                            widget.snap['uid'],
+                                            widget.snap['likes']);
+                                      },
+                                      child: Icon(
+                                        Icons.thumb_up,
+                                        color: widget.snap['likes']
+                                                .contains(widget.snap['uid'])
+                                            ? Colors.red
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${widget.snap['likes'].length.toString()}',
+                                      style: GoogleFonts.workSans(
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                   ],
                                 ),
                                 SizedBox(width: 15),
@@ -127,7 +149,7 @@ class _DetailPageState extends State<DetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Giving out a Macbook air pro',
+                          widget.snap['title'],
                           style: GoogleFonts.workSans(
                             fontWeight: FontWeight.w600,
                             fontSize: 17,
@@ -135,7 +157,7 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto.',
+                          widget.snap['description'],
                           style: GoogleFonts.workSans(
                             fontSize: 14,
                           ),

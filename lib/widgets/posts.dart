@@ -1,8 +1,15 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nidful/models/user.dart';
+import 'package:nidful/providers/user_provider.dart';
+import 'package:nidful/resources/firestore_methods.dart';
+import 'package:nidful/screens/detail_page.dart';
 import 'package:nidful/widgets/follow_button.dart';
+import 'package:nidful/widgets/like_animation.dart';
+import 'package:provider/provider.dart';
 
 class Posts extends StatefulWidget {
   final snap;
@@ -17,20 +24,60 @@ class Posts extends StatefulWidget {
 }
 
 class _PostsState extends State<Posts> {
+  bool isLikeAnimating = false;
   var color = Colors.white;
   @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).getUser;
+
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                  widget.snap['postUrl'],
+          GestureDetector(
+            onTap: () {
+              Get.to(() => DetailPage(
+                    snap: widget.snap,
+                  ));
+            },
+            onDoubleTap: () async {
+              await FireStoreMethods().likeProduct(
+                  widget.snap['postId'], user.uid, widget.snap['likes']);
+              setState(() {
+                isLikeAnimating = true;
+              });
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        widget.snap['postUrl'],
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                fit: BoxFit.cover,
-              ),
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: isLikeAnimating ? 1.0 : 0.0,
+                  child: LikeAnimation(
+                    child: const Icon(
+                      Icons.thumb_up,
+                      color: Colors.white,
+                      size: 100,
+                    ),
+                    isAnimating: isLikeAnimating,
+                    duration: const Duration(milliseconds: 400),
+                    onEnd: () {
+                      setState(() {
+                        isLikeAnimating = false;
+                      });
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -108,17 +155,27 @@ class _PostsState extends State<Posts> {
                       children: [
                         Column(
                           children: [
-                            InkWell(
-                              onDoubleTap: () {
-                                setState(() {
-                                  color = Colors.red;
-                                });
-                              },
-                              child: Icon(Icons.thumb_up_off_alt_outlined,
-                                  color: color),
+                            LikeAnimation(
+                              isAnimating:
+                                  widget.snap['likes'].contains(user.uid),
+                              smallLike: true,
+                              child: InkWell(
+                                onTap: () async {
+                                  await FireStoreMethods().likeProduct(
+                                      widget.snap['postId'],
+                                      user.uid,
+                                      widget.snap['likes']);
+                                },
+                                child: Icon(
+                                  Icons.thumb_up,
+                                  color: widget.snap['likes'].contains(user.uid)
+                                      ? Colors.red
+                                      : color,
+                                ),
+                              ),
                             ),
                             Text(
-                              '10k',
+                              widget.snap['likes'].length.toString(),
                               style: GoogleFonts.workSans(color: Colors.white),
                             ),
                           ],

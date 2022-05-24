@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +8,8 @@ import 'package:nidful/screens/detail_page.dart';
 import 'package:nidful/widgets/item_list.dart';
 
 class CatList extends StatelessWidget {
-  const CatList({Key? key}) : super(key: key);
+  final String search;
+  const CatList({Key? key, required this.search}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,41 +37,40 @@ class CatList extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListView(
+        child: FutureBuilder(
+          future: FirebaseFirestore.instance
+              .collection('products')
+              .where('title', isGreaterThanOrEqualTo: search)
+              .get(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return ListView.builder(
+              itemCount: (snapshot.data! as dynamic).docs.length,
               scrollDirection: Axis.vertical,
               physics: ScrollPhysics(),
               shrinkWrap: true,
-              children: [
-                InkWell(
+              itemBuilder: (context, index) {
+                return InkWell(
                   onTap: () {
                     Get.to(() => DetailPage(
-                          title: 'Macbook Air Pro',
+                          snap: (snapshot.data! as dynamic).docs[index].data(),
                         ));
                   },
                   child: ItemList(
-                    image: 'assets/list1.png',
-                    label: 'Giving out Free Food',
-                    desc: 'Lorem Ipsum es simplemente .',
-                    cat: 'Food',
+                    image: (snapshot.data! as dynamic).docs[index]['postUrl'],
+                    label: (snapshot.data! as dynamic).docs[index]['title'],
+                    desc: (snapshot.data! as dynamic).docs[index]
+                        ['description'],
+                    cat: (snapshot.data! as dynamic).docs[index]['category'],
                   ),
-                ),
-                ItemList(
-                  image: 'assets/list1.png',
-                  label: 'Giving out Free Food',
-                  desc: 'Lorem Ipsum es simplemente .',
-                  cat: 'Food',
-                ),
-                ItemList(
-                  image: 'assets/list1.png',
-                  label: 'Giving out Free Food',
-                  desc: 'Lorem Ipsum es simplemente .',
-                  cat: 'Food',
-                ),
-              ],
-            ),
-          ],
+                );
+              },
+            );
+          },
         ),
       ),
     );

@@ -37,10 +37,9 @@ class _ItemListState extends State<ItemList> {
                 Container(
                   width: 110,
                   height: 110,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(widget.image),
-                    ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(widget.image),
                   ),
                 ),
                 SizedBox(width: 18),
@@ -55,8 +54,14 @@ class _ItemListState extends State<ItemList> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
-                        widget.desc,
+                        widget.desc.length > 30
+                            ? widget.desc.substring(0, 30) + '...'
+                            : widget.desc,
+                        overflow: TextOverflow.fade,
+                        maxLines: 1,
+                        softWrap: false,
                         style: TextStyle(
+                          fontSize: 12,
                           color: Colors.grey,
                           overflow: TextOverflow.ellipsis,
                         ),

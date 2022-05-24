@@ -24,6 +24,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    searchController.dispose();
+  }
+
   var dummyData = [
     {'label': 'Food', 'image': 'assets/product1.png'},
     {'label': 'Gadgets', 'image': 'assets/product2.png'},
@@ -87,21 +96,33 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Row(
                       children: [
-                        Expanded(child: InputWidget(label: '', hint: 'Search')),
+                        Expanded(
+                          child: InputWidget(
+                              controller: searchController,
+                              label: '',
+                              hint: 'Search'),
+                        ),
                         SizedBox(width: 7),
                         Column(
                           children: [
                             SizedBox(height: 16),
-                            Container(
-                              padding: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: primaryColor,
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.filter_list_outlined,
-                                  color: Colors.white,
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => CatList(
+                                      search: searchController.text,
+                                    ));
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: primaryColor,
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.filter_list_outlined,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -128,7 +149,9 @@ class _HomePageState extends State<HomePage> {
                     itemCount: dummyData.length,
                     itemBuilder: (BuildContext context, int index) => InkWell(
                       onTap: () {
-                        Get.to(() => CatList());
+                        Get.to(() => CatList(
+                              search: 'Ip',
+                            ));
                       },
                       child: CategoryWidget(
                         label: 'Food',
