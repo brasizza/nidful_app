@@ -1,4 +1,4 @@
-package com.nidful.app.nidful
+package com.groomlog.nidful.app
 
 import io.flutter.embedding.android.FlutterActivity
 

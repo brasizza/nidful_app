@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nidful.app.nidful">
+    package="com.groomlog.nidful.app">
    <application
         android:label="nidful"
         android:name="${applicationName}"

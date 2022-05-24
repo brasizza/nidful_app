@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
+import 'package:nidful/resources/auth_methods.dart';
 import 'package:nidful/screens/forgot_password.dart';
 import 'package:nidful/screens/home.dart';
 import 'package:nidful/screens/register.dart';
+import 'package:nidful/utils/utils.dart';
 import 'package:nidful/widgets/bottom_bar.dart';
 import 'package:nidful/widgets/color_button.dart';
 import 'package:nidful/widgets/input_field.dart';
@@ -19,6 +21,34 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethod().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+
+    if (res != 'success') {
+      showSnackBar(res, context);
+    } else {
+      Get.offAll(() => BottomBar());
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 30,
               ),
               InputWidget(
+                controller: _emailController,
                 label: 'Email Address',
                 hint: 'johndoe@email.com',
               ),
@@ -64,6 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 16,
               ),
               InputWidget(
+                controller: _passwordController,
                 label: 'Password',
                 isObscure: true,
               ),
@@ -75,11 +107,28 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     Get.to(() => BottomBar());
                   },
-                  child: Button(
-                    label: 'Sign In',
-                    width: double.infinity,
-                    height: 50,
-                  ),
+                  child: InkWell(
+                      onTap: loginUser,
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: _isLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'Login',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                        ),
+                      )),
                 ),
               ),
               SizedBox(

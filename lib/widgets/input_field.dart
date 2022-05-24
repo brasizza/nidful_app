@@ -9,13 +9,15 @@ class InputWidget extends StatefulWidget {
   final String? hint;
   final double? height;
   final bool isObscure;
+  final TextEditingController? controller;
 
   const InputWidget(
       {Key? key,
       required this.label,
       this.hint,
       this.isObscure = false,
-      this.height})
+      this.height,
+      this.controller})
       : super(key: key);
 
   @override
@@ -40,6 +42,7 @@ class _InputWidgetState extends State<InputWidget> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: TextField(
+            controller: widget.controller,
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: widget.hint,

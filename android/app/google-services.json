@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "648858717000",
+    "project_id": "nidful-app",
+    "storage_bucket": "nidful-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:648858717000:android:534b8d16f8822008f1417d",
+        "android_client_info": {
+          "package_name": "com.groomlog.nidful.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "648858717000-bsvi32jqn2j0smea11jdrcc4afrg50j9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpH2AJ_2xRlwk9CtLe22WnYjLG2mO8C2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "648858717000-bsvi32jqn2j0smea11jdrcc4afrg50j9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

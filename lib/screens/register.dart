@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
+import 'package:nidful/resources/auth_methods.dart';
+import 'package:nidful/screens/home.dart';
 import 'package:nidful/screens/login.dart';
+import 'package:nidful/utils/utils.dart';
+import 'package:nidful/widgets/bottom_bar.dart';
 import 'package:nidful/widgets/color_button.dart';
 import 'package:nidful/widgets/input_field.dart';
 
@@ -16,6 +20,40 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _usernameController.dispose();
+  }
+
+  void signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethod().signUpUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+      username: _usernameController.text,
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (res != 'success') {
+      showSnackBar(res, context);
+    } else {
+      Get.offAll(() => BottomBar());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 16,
                 ),
                 InputWidget(
+                  controller: _usernameController,
                   label: 'Username',
                   hint: 'johndoe',
                 ),
@@ -66,6 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 16,
                 ),
                 InputWidget(
+                  controller: _emailController,
                   label: 'Email Address',
                   hint: 'johndoe@email.com',
                 ),
@@ -73,6 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 16,
                 ),
                 InputWidget(
+                  controller: _passwordController,
                   label: 'Password',
                   isObscure: true,
                 ),
@@ -80,10 +121,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 30,
                 ),
                 Center(
-                  child: Button(
-                    label: 'Create Account',
-                    width: double.infinity,
-                    height: 50,
+                  child: InkWell(
+                    onTap: signUpUser,
+                    child: Button(
+                      label: _isLoading ? 'Loading...' : 'Create Account',
+                      width: double.infinity,
+                      height: 50,
+                    ),
                   ),
                 ),
                 SizedBox(
