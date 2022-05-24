@@ -122,11 +122,31 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 Center(
                   child: InkWell(
-                    onTap: signUpUser,
-                    child: Button(
-                      label: _isLoading ? 'Loading...' : 'Create Account',
-                      width: double.infinity,
-                      height: 50,
+                    onTap: () {
+                      Get.to(() => BottomBar());
+                    },
+                    child: InkWell(
+                      onTap: signUpUser,
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: _isLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'Create Account',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

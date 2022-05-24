@@ -1,16 +1,20 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
+import 'package:nidful/models/user.dart' as model;
+import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/cat_list.dart';
 import 'package:nidful/screens/message_lists.dart';
-import 'package:nidful/widgets/bottom_bar.dart';
 import 'package:nidful/widgets/category_grid.dart';
 import 'package:nidful/widgets/circle_icon.dart';
 import 'package:nidful/widgets/input_field.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,6 +33,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    model.User user = Provider.of<UserProvider>(context).getUser;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -46,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Hi Doe 👋',
+                                'Hi ${user.username} 👋',
                                 style: GoogleFonts.workSans(
                                     fontSize: 23, fontWeight: FontWeight.w500),
                               ),

@@ -108,27 +108,28 @@ class _LoginPageState extends State<LoginPage> {
                     Get.to(() => BottomBar());
                   },
                   child: InkWell(
-                      onTap: loginUser,
-                      child: Container(
-                        width: double.infinity,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Center(
-                          child: _isLoading
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : Text(
-                                  'Login',
-                                  style: TextStyle(color: Colors.white),
+                    onTap: loginUser,
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: _isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
                                 ),
-                        ),
-                      )),
+                              )
+                            : Text(
+                                'Login',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               SizedBox(

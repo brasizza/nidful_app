@@ -5,20 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/widgets/follow_button.dart';
 
 class Posts extends StatefulWidget {
-  final String image;
-  final String userProfileImage;
-  final String name;
-  final String label;
-  final String likeCount;
+  final snap;
 
-  const Posts(
-      {Key? key,
-      required this.image,
-      required this.userProfileImage,
-      required this.name,
-      required this.label,
-      required this.likeCount})
-      : super(key: key);
+  const Posts({
+    Key? key,
+    required this.snap,
+  }) : super(key: key);
 
   @override
   State<Posts> createState() => _PostsState();
@@ -34,7 +26,9 @@ class _PostsState extends State<Posts> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: Image.asset(widget.image).image,
+                image: NetworkImage(
+                  widget.snap['postUrl'],
+                ),
                 fit: BoxFit.cover,
               ),
             ),
@@ -50,15 +44,25 @@ class _PostsState extends State<Posts> {
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage(widget.userProfileImage),
-                        ),
+                        widget.snap['profImage'] == ''
+                            ? CircleAvatar(
+                                radius: 16,
+                                backgroundImage: AssetImage(
+                                  'assets/user2.png',
+                                ),
+                              )
+                            : CircleAvatar(
+                                radius: 16,
+                                backgroundImage: NetworkImage(
+                                  widget.snap['profImage'],
+                                ),
+                              ),
                         SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.name,
+                              widget.snap['username'],
                               style: GoogleFonts.workSans(color: Colors.white),
                             ),
                             Text(
@@ -85,11 +89,11 @@ class _PostsState extends State<Posts> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.label,
+                          widget.snap['title'],
                           style: GoogleFonts.workSans(color: Colors.white),
                         ),
                         Text(
-                          'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto.',
+                          widget.snap['description'],
                           style: GoogleFonts.workSans(color: Colors.grey),
                         ),
                       ]),
@@ -114,7 +118,7 @@ class _PostsState extends State<Posts> {
                                   color: color),
                             ),
                             Text(
-                              widget.likeCount,
+                              '10k',
                               style: GoogleFonts.workSans(color: Colors.white),
                             ),
                           ],

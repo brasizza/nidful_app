@@ -5,11 +5,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:nidful/screens/home.dart';
+import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/login.dart';
-import 'package:nidful/screens/on_board.dart';
 import 'package:flutter/services.dart';
 import 'package:nidful/widgets/bottom_bar.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,31 +30,38 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (child) {
-        return GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Nidful',
-          home: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.active) {
-                if (snapshot.hasData) {
-                  return BottomBar();
-                } else if (snapshot.hasError) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => UserProvider(),
+            ),
+          ],
+          child: GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Nidful',
+            home: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  if (snapshot.hasData) {
+                    return BottomBar();
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  }
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: Text('${snapshot.error}'),
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
                   );
                 }
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                );
-              }
 
-              return LoginPage();
-            },
+                return LoginPage();
+              },
+            ),
           ),
         );
       },

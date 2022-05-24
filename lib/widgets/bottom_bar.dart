@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:nidful/constant/constants.dart';
+import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/notification.dart';
 import 'package:nidful/screens/explore_page.dart';
 import 'package:nidful/screens/home.dart';
 import 'package:nidful/screens/profile_page.dart';
+import 'package:provider/provider.dart';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({Key? key}) : super(key: key);
@@ -15,6 +17,17 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
+  @override
+  void initState() {
+    super.initState();
+    addData();
+  }
+
+  addData() async {
+    UserProvider _userProvider = Provider.of(context, listen: false);
+    await _userProvider.refreshUser();
+  }
+
   var index = 0;
 
   final screens = [
