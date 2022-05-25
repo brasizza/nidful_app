@@ -79,13 +79,36 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(
                                 width: 7,
                               ),
-                              InkWell(
-                                onTap: () {
-                                  Get.to(() => MessageList());
-                                },
-                                child: CircleIcon(
-                                  icon: Icons.message_outlined,
-                                ),
+                              Stack(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(() => MessageList());
+                                    },
+                                    child: CircleIcon(
+                                      icon: Icons.message_outlined,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 13,
+                                      height: 13,
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          '2',
+                                          style: TextStyle(
+                                              color: Colors.white, fontSize: 8),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               )
                             ],
                           ),
