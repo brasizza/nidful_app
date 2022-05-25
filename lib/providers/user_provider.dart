@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:nidful/models/user.dart';
 import 'package:nidful/resources/auth_methods.dart';
 
-class UserProvider extends ChangeNotifier {
+class UserProvider with ChangeNotifier {
   User? _user;
-  final AuthMethod _authMethod = AuthMethod();
+  final AuthMethod _authMethods = AuthMethod();
 
   User get getUser => _user!;
 
   Future<void> refreshUser() async {
-    User user = await _authMethod.getUserDetails();
-
+    User user = await _authMethods.getUserDetails();
     _user = user;
     notifyListeners();
   }

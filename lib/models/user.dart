@@ -33,13 +33,13 @@ class User {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return User(
-      username: snapshot['username'],
-      uid: snapshot['uid'],
-      email: snapshot['email'],
-      photoUrl: snapshot['photoUrl'],
-      bio: snapshot['bio'],
-      followers: snapshot['followers'],
-      following: snapshot['following'],
+      username: snapshot['username'] ?? 'Dummy Data',
+      uid: snapshot['uid'] ?? 'Dummy Data',
+      email: snapshot['email'] ?? 'Dummy Data',
+      photoUrl: snapshot['photoUrl'] ?? 'No image',
+      bio: snapshot['bio'] ?? 'Dummy Data',
+      followers: snapshot['followers'] ?? [],
+      following: snapshot['following'] ?? [],
     );
   }
 }

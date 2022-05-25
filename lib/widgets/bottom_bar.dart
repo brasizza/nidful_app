@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/notification.dart';
@@ -40,53 +41,73 @@ class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
       body: screens[index],
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          indicatorColor: primaryColor,
+      bottomNavigationBar: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
         ),
-        child: NavigationBar(
-          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-          animationDuration: Duration(seconds: 2),
-          height: 60,
-          selectedIndex: index,
-          onDestinationSelected: (index) => setState(() => this.index = index),
-          backgroundColor: Colors.white,
-          destinations: [
-            NavigationDestination(
-              icon: Icon(Icons.home),
-              selectedIcon: Icon(
-                Icons.home,
-                color: Colors.white,
-              ),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.explore),
-              selectedIcon: Icon(
-                Icons.explore,
-                color: Colors.white,
-              ),
-              label: 'Explore',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.notifications),
-              selectedIcon: Icon(
-                Icons.notifications,
-                color: Colors.white,
-              ),
-              label: 'Notifications',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.person),
-              selectedIcon: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
-              label: 'Profile',
-            ),
+        child: BottomNavigationBar(
+          currentIndex: index,
+          onTap: (index) => setState(() => this.index = index),
+          elevation: 0,
+          items: [
+            BottomNavigationBarItem(
+                icon: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: index == 0 ? primaryColor : Colors.transparent,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/HOME.svg',
+                    semanticsLabel: 'HOME',
+                    color: index == 0 ? Colors.white : primaryColor,
+                  ),
+                ),
+                label: ''),
+            BottomNavigationBarItem(
+                icon: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: index == 1 ? primaryColor : Colors.transparent,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/EXPLORE.svg',
+                    semanticsLabel: 'EXPLORE',
+                    color: index == 1 ? Colors.white : primaryColor,
+                  ),
+                ),
+                label: ''),
+            BottomNavigationBarItem(
+                icon: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: index == 2 ? primaryColor : Colors.transparent,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/NOTIFICATION.svg',
+                    semanticsLabel: 'NOTIFICATION',
+                    color: index == 2 ? Colors.white : primaryColor,
+                  ),
+                ),
+                label: ''),
+            BottomNavigationBarItem(
+                icon: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: index == 3 ? primaryColor : Colors.transparent,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/USER.svg',
+                    semanticsLabel: 'USER',
+                    color: index == 3 ? Colors.white : primaryColor,
+                  ),
+                ),
+                label: ''),
           ],
         ),
       ),

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nidful/models/user.dart';
 import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/resources/firestore_methods.dart';
@@ -63,11 +64,12 @@ class _PostsState extends State<Posts> {
                   duration: const Duration(milliseconds: 200),
                   opacity: isLikeAnimating ? 1.0 : 0.0,
                   child: LikeAnimation(
-                    child: const Icon(
-                      Icons.thumb_up,
-                      color: Colors.white,
-                      size: 100,
-                    ),
+                    child: Lottie.asset('assets/like.json'),
+                    // child: const Icon(
+                    //   Icons.thumb_up,
+                    //   color: Colors.white,
+                    //   size: 100,
+                    // ),
                     isAnimating: isLikeAnimating,
                     duration: const Duration(milliseconds: 400),
                     onEnd: () {

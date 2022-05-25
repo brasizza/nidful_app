@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/resources/auth_methods.dart';
 import 'package:nidful/screens/forgot_password.dart';
@@ -47,6 +48,26 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  _showanimation(BuildContext context, animation) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          children: [
+            SimpleDialogOption(
+              padding: EdgeInsets.all(20),
+              child: Lottie.asset(
+                animation,
+                width: 100,
+                height: 100,
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
