@@ -3,6 +3,7 @@ import 'package:nidful/constant/constants.dart';
 
 class Button extends StatelessWidget {
   final String label;
+  final load;
   final double? width;
   final double? height;
   final Color? color;
@@ -15,7 +16,8 @@ class Button extends StatelessWidget {
       this.height,
       this.color,
       this.textcolor,
-      this.function})
+      this.function,
+      this.load})
       : super(key: key);
 
   @override
@@ -30,10 +32,12 @@ class Button extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         child: Center(
-          child: Text(
-            label,
-            style: TextStyle(color: textcolor ?? Colors.white),
-          ),
+          child: load != ""
+              ? load
+              : Text(
+                  label,
+                  style: TextStyle(color: textcolor ?? Colors.white),
+                ),
         ),
       ),
     );

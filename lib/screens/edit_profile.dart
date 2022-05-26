@@ -183,7 +183,17 @@ class _EditprofileState extends State<Editprofile> {
                         height: 20,
                       ),
                       Button(
-                        label: isLoading ? 'Updating....' : 'Update Info',
+                        label: isLoading ? '' : 'Update Info',
+                        load: isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                'Update Info',
+                                style: TextStyle(color: Colors.white),
+                              ),
                         width: 400,
                         height: 60,
                         function: () async {

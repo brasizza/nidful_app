@@ -24,8 +24,8 @@ class FireStoreMethods {
   ) async {
     String res = 'Some error occured';
     try {
-      String photoUrl =
-          await StorageMethods().uploadImageToStorage('products', file, true);
+      String photoUrl = await StorageMethods()
+          .uploadImageToStorage('products', file, true, false);
 
       String postId = const Uuid().v1();
 
@@ -107,8 +107,8 @@ class FireStoreMethods {
   ) async {
     String res = 'Some error occured';
 
-    String photoUrl =
-        await StorageMethods().uploadImageToStorage('products', file, true);
+    String photoUrl = await StorageMethods()
+        .uploadImageToStorage('profile', file, false, true);
 
     try {
       await _firestore
