@@ -7,28 +7,33 @@ class Button extends StatelessWidget {
   final double? height;
   final Color? color;
   final Color? textcolor;
+  final Function()? function;
   const Button(
       {Key? key,
       required this.label,
       this.width,
       this.height,
       this.color,
-      this.textcolor})
+      this.textcolor,
+      this.function})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: color ?? primaryColor,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Center(
-        child: Text(
-          label,
-          style: TextStyle(color: textcolor ?? Colors.white),
+    return GestureDetector(
+      onTap: function,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: color ?? primaryColor,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(color: textcolor ?? Colors.white),
+          ),
         ),
       ),
     );

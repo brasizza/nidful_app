@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
@@ -11,6 +12,7 @@ import 'package:nidful/models/user.dart' as model;
 import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/cat_list.dart';
 import 'package:nidful/screens/message_lists.dart';
+import 'package:nidful/screens/post_product.dart';
 import 'package:nidful/widgets/category_grid.dart';
 import 'package:nidful/widgets/circle_icon.dart';
 import 'package:nidful/widgets/input_field.dart';
@@ -73,8 +75,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Row(
                             children: [
-                              CircleIcon(
-                                icon: Icons.add_outlined,
+                              GestureDetector(
+                                onTap: () => Get.to(() => PostProduct()),
+                                child: CircleIcon(
+                                    isSvg: true, icon: 'assets/PLUS.svg'),
                               ),
                               SizedBox(
                                 width: 7,
@@ -86,7 +90,8 @@ class _HomePageState extends State<HomePage> {
                                       Get.to(() => MessageList());
                                     },
                                     child: CircleIcon(
-                                      icon: Icons.message_outlined,
+                                      isSvg: true,
+                                      icon: 'assets/MSG.svg',
                                     ),
                                   ),
                                   Positioned(
@@ -123,6 +128,7 @@ class _HomePageState extends State<HomePage> {
                           child: InputWidget(
                               controller: searchController,
                               label: '',
+                              height: 50,
                               hint: 'Search'),
                         ),
                         SizedBox(width: 7),
@@ -142,8 +148,8 @@ class _HomePageState extends State<HomePage> {
                                   color: primaryColor,
                                 ),
                                 child: Center(
-                                  child: Icon(
-                                    Icons.filter_list_outlined,
+                                  child: SvgPicture.asset(
+                                    'assets/FILTER.svg',
                                     color: Colors.white,
                                   ),
                                 ),

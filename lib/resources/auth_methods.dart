@@ -33,6 +33,8 @@ class AuthMethod {
         // save user data to db
 
         model.User user = model.User(
+          firstname: '',
+          lastname: '',
           username: username,
           uid: cred.user!.uid,
           email: email,

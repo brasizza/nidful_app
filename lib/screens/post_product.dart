@@ -80,47 +80,48 @@ class _PostProductState extends State<PostProduct> {
 
   _selectImage(BuildContext context) async {
     return showDialog(
-        context: context,
-        builder: (context) {
-          return SimpleDialog(
-            title: Text('Add an image'),
-            children: [
-              SimpleDialogOption(
-                padding: EdgeInsets.all(20),
-                child: Text('Take a photo'),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  Uint8List file = await pickImage(
-                    ImageSource.camera,
-                  );
-                  setState(() {
-                    _file = file;
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                padding: EdgeInsets.all(20),
-                child: Text('Choose from gallery'),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  Uint8List file = await pickImage(
-                    ImageSource.gallery,
-                  );
-                  setState(() {
-                    _file = file;
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                padding: EdgeInsets.all(20),
-                child: Text('Cancel'),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: Text('Add an image'),
+          children: [
+            SimpleDialogOption(
+              padding: EdgeInsets.all(20),
+              child: Text('Take a photo'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                Uint8List file = await pickImage(
+                  ImageSource.camera,
+                );
+                setState(() {
+                  _file = file;
+                });
+              },
+            ),
+            SimpleDialogOption(
+              padding: EdgeInsets.all(20),
+              child: Text('Choose from gallery'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                Uint8List file = await pickImage(
+                  ImageSource.gallery,
+                );
+                setState(() {
+                  _file = file;
+                });
+              },
+            ),
+            SimpleDialogOption(
+              padding: EdgeInsets.all(20),
+              child: Text('Cancel'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   _showanimation(BuildContext context, animation) async {

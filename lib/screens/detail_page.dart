@@ -62,7 +62,7 @@ class _DetailPageState extends State<DetailPage> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Get.to(() => ProfilePage());
+                            Get.to(() => ProfilePage(uid: widget.snap['uid']));
                           },
                           child: CircleAvatar(
                             backgroundImage:

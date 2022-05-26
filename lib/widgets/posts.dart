@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -141,6 +142,9 @@ class _PostsState extends State<Posts> {
                           widget.snap['title'],
                           style: GoogleFonts.workSans(color: Colors.white),
                         ),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Text(
                           widget.snap['description'],
                           style: GoogleFonts.workSans(color: Colors.grey),
@@ -168,25 +172,37 @@ class _PostsState extends State<Posts> {
                                       user.uid,
                                       widget.snap['likes']);
                                 },
-                                child: Icon(
-                                  Icons.thumb_up,
+                                child: SvgPicture.asset(
+                                  'assets/LIKE.svg',
+                                  width: 20,
+                                  height: 20,
                                   color: widget.snap['likes'].contains(user.uid)
                                       ? Colors.red
-                                      : color,
+                                      : Colors.black,
                                 ),
                               ),
                             ),
                             Text(
                               widget.snap['likes'].length.toString(),
-                              style: GoogleFonts.workSans(color: Colors.white),
+                              style: GoogleFonts.workSans(color: Colors.black),
                             ),
                           ],
                         ),
                         SizedBox(width: 15),
-                        Icon(Icons.share_outlined, color: Colors.white),
+                        SvgPicture.asset(
+                          'assets/SHARE.svg',
+                          width: 20,
+                          height: 20,
+                          color: Colors.black,
+                        ),
                       ],
                     ),
-                    Icon(Icons.bookmark_outline, color: Colors.white),
+                    SvgPicture.asset(
+                      'assets/BOOKMARK.svg',
+                      width: 20,
+                      height: 20,
+                      color: Colors.black,
+                    ),
                   ],
                 ),
               ],

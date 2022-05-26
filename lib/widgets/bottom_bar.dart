@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nidful/constant/constants.dart';
@@ -35,7 +36,7 @@ class _BottomBarState extends State<BottomBar> {
     HomePage(),
     ExplorePage(),
     NotificationPage(),
-    ProfilePage(),
+    ProfilePage(uid: FirebaseAuth.instance.currentUser!.uid),
   ];
 
   @override
