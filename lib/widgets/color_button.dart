@@ -32,12 +32,11 @@ class Button extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         child: Center(
-          child: load != ""
-              ? load
-              : Text(
-                  label,
-                  style: TextStyle(color: textcolor ?? Colors.white),
-                ),
+          child: load ??
+              Text(
+                label,
+                style: TextStyle(color: textcolor ?? Colors.white),
+              ),
         ),
       ),
     );

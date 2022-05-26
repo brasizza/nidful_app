@@ -3,6 +3,7 @@ import 'package:nidful/models/user.dart';
 import 'package:nidful/resources/auth_methods.dart';
 
 class UserProvider with ChangeNotifier {
+  bool isLoading = false;
   User? _user;
   final AuthMethod _authMethods = AuthMethod();
 

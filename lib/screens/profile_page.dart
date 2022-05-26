@@ -50,13 +50,14 @@ class _ProfilePageState extends State<ProfilePage> {
       // get Product length
       var postSnap = await FirebaseFirestore.instance
           .collection('products')
-          .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where('uid', isEqualTo: widget.uid)
           .get();
       productLength = postSnap.docs.length;
       userData = userSnap.data()!;
       followers = userData['followers'].length;
       following = userData['following'].length;
-      isFollowing = userData['following']
+      isFollowing = userSnap
+          .data()!['followers']
           .contains(FirebaseAuth.instance.currentUser!.uid);
       setState(() {});
     } catch (e) {
@@ -246,8 +247,32 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Get.to(() => Editprofile());
                                     },
                                   )
-                                : isFollowing
+                                : isFollowing != true
                                     ? Button(
+                                        label: 'Follow',
+                                        load: Text(
+                                          'Follow',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        color: primaryColor,
+                                        textcolor: Colors.white,
+                                        width: 150,
+                                        height: 40,
+                                        function: () async {
+                                          await FireStoreMethods().followUser(
+                                            FirebaseAuth
+                                                .instance.currentUser!.uid,
+                                            userData['uid'],
+                                          );
+                                          setState(() {
+                                            isFollowing = true;
+                                            followers++;
+                                          });
+                                        },
+                                      )
+                                    : Button(
                                         label: 'Unfollow',
                                         color: Colors.grey[300],
                                         textcolor: primaryColor,
@@ -265,24 +290,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                           });
                                         },
                                       )
-                                    : Button(
-                                        label: 'Follow',
-                                        color: primaryColor,
-                                        textcolor: Colors.white,
-                                        width: 150,
-                                        height: 40,
-                                        function: () async {
-                                          await FireStoreMethods().followUser(
-                                            FirebaseAuth
-                                                .instance.currentUser!.uid,
-                                            userData['uid'],
-                                          );
-                                          setState(() {
-                                            isFollowing = true;
-                                            followers++;
-                                          });
-                                        },
-                                      ),
                           ],
                         ),
                         SizedBox(height: 30),

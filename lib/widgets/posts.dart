@@ -9,6 +9,7 @@ import 'package:nidful/models/user.dart';
 import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/resources/firestore_methods.dart';
 import 'package:nidful/screens/detail_page.dart';
+import 'package:nidful/screens/profile_page.dart';
 import 'package:nidful/widgets/follow_button.dart';
 import 'package:nidful/widgets/like_animation.dart';
 import 'package:provider/provider.dart';
@@ -92,36 +93,47 @@ class _PostsState extends State<Posts> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        widget.snap['profImage'] == ''
-                            ? CircleAvatar(
-                                radius: 16,
-                                backgroundImage: AssetImage(
-                                  'assets/user2.png',
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(
+                          () => ProfilePage(
+                            uid: widget.snap['uid'],
+                          ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          widget.snap['profImage'] == ''
+                              ? CircleAvatar(
+                                  radius: 16,
+                                  backgroundImage: AssetImage(
+                                    'assets/user2.png',
+                                  ),
+                                )
+                              : CircleAvatar(
+                                  radius: 16,
+                                  backgroundImage: NetworkImage(
+                                    widget.snap['profImage'],
+                                  ),
                                 ),
-                              )
-                            : CircleAvatar(
-                                radius: 16,
-                                backgroundImage: NetworkImage(
-                                  widget.snap['profImage'],
-                                ),
+                          SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.snap['username'],
+                                style:
+                                    GoogleFonts.workSans(color: Colors.white),
                               ),
-                        SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.snap['username'],
-                              style: GoogleFonts.workSans(color: Colors.white),
-                            ),
-                            Text(
-                              'We rise by lifting others',
-                              style: GoogleFonts.workSans(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ],
+                              Text(
+                                'We rise by lifting others',
+                                style:
+                                    GoogleFonts.workSans(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     FollowButton(
                       label: 'Following',

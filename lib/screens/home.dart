@@ -27,6 +27,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController searchController = TextEditingController();
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -46,157 +47,166 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     model.User user = Provider.of<UserProvider>(context).getUser;
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Appbar
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+    return isLoading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            body: SafeArea(
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Appbar
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Hi ${user.username} 👋',
-                                style: GoogleFonts.workSans(
-                                    fontSize: 23, fontWeight: FontWeight.w500),
-                              ),
-                              Text(
-                                'What are you giving out today?',
-                                style: GoogleFonts.workSans(),
-                              )
-                            ],
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Hi ${user.username} 👋',
+                                      style: GoogleFonts.workSans(
+                                          fontSize: 23,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Text(
+                                      'What are you giving out today?',
+                                      style: GoogleFonts.workSans(),
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () => Get.to(() => PostProduct()),
+                                      child: CircleIcon(
+                                          isSvg: true, icon: 'assets/PLUS.svg'),
+                                    ),
+                                    SizedBox(
+                                      width: 7,
+                                    ),
+                                    Stack(
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            Get.to(() => MessageList());
+                                          },
+                                          child: CircleIcon(
+                                            isSvg: true,
+                                            icon: 'assets/MSG.svg',
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: Container(
+                                            width: 13,
+                                            height: 13,
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '2',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 8),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ]),
+                          // Serchbar
+                          SizedBox(
+                            height: 30,
                           ),
                           Row(
                             children: [
-                              GestureDetector(
-                                onTap: () => Get.to(() => PostProduct()),
-                                child: CircleIcon(
-                                    isSvg: true, icon: 'assets/PLUS.svg'),
+                              Expanded(
+                                child: InputWidget(
+                                    controller: searchController,
+                                    label: '',
+                                    height: 50,
+                                    hint: 'Search'),
                               ),
-                              SizedBox(
-                                width: 7,
-                              ),
-                              Stack(
+                              SizedBox(width: 7),
+                              Column(
                                 children: [
-                                  InkWell(
+                                  SizedBox(height: 16),
+                                  GestureDetector(
                                     onTap: () {
-                                      Get.to(() => MessageList());
+                                      Get.to(() => CatList(
+                                            search: searchController.text,
+                                          ));
                                     },
-                                    child: CircleIcon(
-                                      isSvg: true,
-                                      icon: 'assets/MSG.svg',
-                                    ),
-                                  ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 0,
                                     child: Container(
-                                      width: 13,
-                                      height: 13,
+                                      padding: EdgeInsets.all(15),
                                       decoration: BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius: BorderRadius.circular(50),
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: primaryColor,
                                       ),
                                       child: Center(
-                                        child: Text(
-                                          '2',
-                                          style: TextStyle(
-                                              color: Colors.white, fontSize: 8),
+                                        child: SvgPicture.asset(
+                                          'assets/FILTER.svg',
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
-                        ]),
-                    // Serchbar
-                    SizedBox(
-                      height: 30,
+                        ],
+                      ),
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InputWidget(
-                              controller: searchController,
-                              label: '',
-                              height: 50,
-                              hint: 'Search'),
-                        ),
-                        SizedBox(width: 7),
-                        Column(
-                          children: [
-                            SizedBox(height: 16),
-                            GestureDetector(
-                              onTap: () {
-                                Get.to(() => CatList(
-                                      search: searchController.text,
-                                    ));
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: primaryColor,
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/FILTER.svg',
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        child: StaggeredGridView.countBuilder(
+                          physics: ScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 1,
+                          mainAxisSpacing: 16,
+                          itemCount: dummyData.length,
+                          itemBuilder: (BuildContext context, int index) =>
+                              InkWell(
+                            onTap: () {
+                              Get.to(() => CatList(
+                                    search: 'Ip',
+                                  ));
+                            },
+                            child: CategoryWidget(
+                              label: 'Food',
+                              image: 'assets/product2.png',
                             ),
-                          ],
+                          ),
+                          staggeredTileBuilder: (int index) =>
+                              StaggeredTile.fit(1),
+                          // mainAxisSpacing: 4.0,
+                          // crossAxisSpacing: 4.0,
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 2,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  child: StaggeredGridView.countBuilder(
-                    physics: ScrollPhysics(),
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 1,
-                    mainAxisSpacing: 16,
-                    itemCount: dummyData.length,
-                    itemBuilder: (BuildContext context, int index) => InkWell(
-                      onTap: () {
-                        Get.to(() => CatList(
-                              search: 'Ip',
-                            ));
-                      },
-                      child: CategoryWidget(
-                        label: 'Food',
-                        image: 'assets/product2.png',
-                      ),
-                    ),
-                    staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-                    // mainAxisSpacing: 4.0,
-                    // crossAxisSpacing: 4.0,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
