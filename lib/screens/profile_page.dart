@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/resources/firestore_methods.dart';
+import 'package:nidful/screens/chat_page.dart';
 import 'package:nidful/screens/detail_page.dart';
 import 'package:nidful/screens/edit_profile.dart';
 import 'package:nidful/screens/post_product.dart';
@@ -25,17 +26,20 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   var userData = {};
+  var check = {};
   int productLength = 0;
   int followers = 0;
   int following = 0;
   bool isFollowing = false;
   bool isLoading = false;
+  var showMsg = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getData();
+    checkVet();
   }
 
   getData() async {
@@ -68,6 +72,25 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  checkVet() async {
+    try {
+      var checkSnap = await FirebaseFirestore.instance
+          .collection('vet')
+          .where('requester', isEqualTo: widget.uid)
+          .get();
+      check = checkSnap.docs.first.data();
+      print(checkSnap);
+      if (check['status'] == 'accepted' &&
+          check['uid'] == FirebaseAuth.instance.currentUser!.uid) {
+        setState(() {
+          showMsg = true;
+        });
+      }
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
   }
 
   @override
@@ -120,8 +143,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         color: Colors.black,
                         size: 20,
                       ),
-                      onPressed: () {
-                        FirebaseAuth.instance.signOut();
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
                       },
                     ),
                   ],
@@ -294,6 +317,39 @@ class _ProfilePageState extends State<ProfilePage> {
                                           });
                                         },
                                       ),
+                            Button(
+                              label: 'Message',
+                              load: Text(
+                                'Message',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              color: primaryColor,
+                              textcolor: Colors.white,
+                              width: 150,
+                              height: 40,
+                              function: () {
+                                Get.to(
+                                  () => ChatPage(receiver: widget.uid),
+                                );
+                              },
+                            ),
+                            showMsg
+                                ? Button(
+                                    label: 'Message',
+                                    load: Text(
+                                      'Message',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    color: primaryColor,
+                                    textcolor: Colors.white,
+                                    width: 150,
+                                    height: 40,
+                                  )
+                                : Container(),
                           ],
                         ),
                         SizedBox(height: 30),

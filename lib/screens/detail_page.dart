@@ -73,10 +73,15 @@ class _DetailPageState extends State<DetailPage> {
                           onTap: () {
                             Get.to(() => ProfilePage(uid: widget.snap['uid']));
                           },
-                          child: CircleAvatar(
-                            backgroundImage:
-                                Image.asset('assets/user.png').image,
-                          ),
+                          child: widget.snap['profImage'] == ""
+                              ? CircleAvatar(
+                                  backgroundImage:
+                                      Image.asset('assets/user.png').image,
+                                )
+                              : CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(widget.snap['profImage']),
+                                ),
                         ),
                         SizedBox(width: 10),
                         Column(
@@ -262,7 +267,29 @@ class _DetailPageState extends State<DetailPage> {
                               children: [
                                 Row(
                                   children: [
-                                    Image.asset('assets/user2.png'),
+                                    (snapshot.data! as dynamic).docs[index]
+                                                ['photoUrl'] ==
+                                            ''
+                                        ? InkWell(
+                                            onTap: () {
+                                              Get.to(
+                                                () => ProfilePage(
+                                                    uid: (snapshot.data!
+                                                                as dynamic)
+                                                            .docs[index]
+                                                        ['requester']),
+                                              );
+                                            },
+                                            child: CircleAvatar(
+                                              backgroundImage: AssetImage(
+                                                  'assets/user2.png'),
+                                            ),
+                                          )
+                                        : CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                (snapshot.data! as dynamic)
+                                                    .docs[index]['photoUrl']),
+                                          ),
                                     SizedBox(width: 10),
                                     Text(
                                       (snapshot.data! as dynamic).docs[index]

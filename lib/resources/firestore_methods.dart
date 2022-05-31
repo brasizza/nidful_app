@@ -136,6 +136,7 @@ class FireStoreMethods {
     required String uid,
     required String requester,
     required String username,
+    required String photoUrl,
   }) async {
     String res = 'Some error occured';
     String rand = const Uuid().v1();
@@ -148,6 +149,7 @@ class FireStoreMethods {
           'username': username,
           'uid': uid,
           'postId': postId,
+          'status': 'pending',
           'date': DateTime.now(),
         });
 
@@ -219,6 +221,22 @@ class FireStoreMethods {
         'postId': postId,
         'date': DateTime.now(),
         'status': 'rejected',
+      });
+      res = 'success';
+    } catch (e) {
+      e.toString();
+    }
+
+    return res;
+  }
+
+  Future<String> acceptVet({
+    required String postId,
+  }) async {
+    String res = 'Some error occured';
+    try {
+      await _firestore.collection('vets').doc(postId).update({
+        'status': 'accepted',
       });
       res = 'success';
     } catch (e) {

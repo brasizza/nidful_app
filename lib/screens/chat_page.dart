@@ -1,20 +1,29 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/models/chatMessageModel.dart';
+import 'package:nidful/models/user.dart' as model;
+import 'package:nidful/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 // import 'package:nidful/widgets/bottom_bar.dart';
 
 class ChatPage extends StatefulWidget {
+  final receiver;
+
+  const ChatPage({Key? key, required this.receiver}) : super(key: key);
   @override
   State<ChatPage> createState() => _ChatPageState();
-
-  final TextEditingController _textEditingController = TextEditingController();
 }
 
 class _ChatPageState extends State<ChatPage> {
+  var data;
+  final _textEditingController = TextEditingController();
+
   List<ChatMessage> messages = [
     ChatMessage(messageContent: "Hello, Precious", messageType: "receiver"),
     ChatMessage(messageContent: "How have you been?", messageType: "receiver"),
@@ -28,7 +37,33 @@ class _ChatPageState extends State<ChatPage> {
   ];
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getProfile();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _textEditingController.dispose();
+  }
+
+  void getProfile() async {
+    DocumentSnapshot snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.receiver)
+        .get();
+    setState(() {
+      data = snap.data();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    model.User user = Provider.of<UserProvider>(context).getUser;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -45,7 +80,7 @@ class _ChatPageState extends State<ChatPage> {
         ),
         centerTitle: true,
         title: Text(
-          "John Doe",
+          data['username'],
           style: GoogleFonts.workSans(
             color: Colors.black,
             fontWeight: FontWeight.w500,
@@ -60,37 +95,59 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Stack(
         children: <Widget>[
-          ListView.builder(
-            itemCount: messages.length,
-            shrinkWrap: true,
-            padding: EdgeInsets.only(top: 10, bottom: 10),
-            physics: ScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Container(
-                padding:
-                    EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-                child: Align(
-                  alignment: (messages[index].messageType == "receiver"
-                      ? Alignment.topLeft
-                      : Alignment.topRight),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: (messages[index].messageType == "receiver"
-                          ? Colors.grey.shade200
-                          : primaryColor),
+          StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('messages')
+                .doc(user.uid)
+                .collection('chats')
+                .doc(widget.receiver)
+                .collection('messages')
+                .snapshots(),
+            builder: (context,
+                AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                shrinkWrap: true,
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                physics: ScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: EdgeInsets.only(
+                        left: 14, right: 14, top: 10, bottom: 10),
+                    child: Align(
+                      alignment: ((snapshot.data!.docs[index]['messageType'] !=
+                              "sender")
+                          ? Alignment.topLeft
+                          : Alignment.topRight),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: ((snapshot.data!.docs[index]['messageType'] !=
+                                  "sender")
+                              ? Colors.grey.shade200
+                              : primaryColor),
+                        ),
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          (snapshot.data!.docs[index]['message']),
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: (snapshot.data!.docs[index]
+                                          ['messageType'] !=
+                                      "sender")
+                                  ? Colors.black
+                                  : Colors.white),
+                        ),
+                      ),
                     ),
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      messages[index].messageContent,
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: messages[index].messageType == "receiver"
-                              ? Colors.black
-                              : Colors.white),
-                    ),
-                  ),
-                ),
+                  );
+                },
               );
             },
           ),
@@ -113,7 +170,7 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     Expanded(
                       child: TextField(
-                        controller: widget._textEditingController,
+                        controller: _textEditingController,
                         decoration: InputDecoration(
                             hintText: "Write message...",
                             hintStyle: TextStyle(color: Colors.black54),
@@ -125,15 +182,30 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     FloatingActionButton(
                       onPressed: () {
-                        setState(() {
-                          messages.add(
-                            ChatMessage(
-                                messageContent:
-                                    widget._textEditingController.text,
-                                messageType: "sender"),
-                          );
-                        });
-                        widget._textEditingController.clear();
+                        if (_textEditingController.text.isNotEmpty) {
+                          FirebaseFirestore.instance
+                              .collection('messages')
+                              .doc(user.uid)
+                              .collection('chats')
+                              .doc(widget.receiver)
+                              .collection('messages')
+                              .add({
+                            'message': _textEditingController.text,
+                            'receiver': widget.receiver,
+                            'sender': FirebaseAuth.instance.currentUser!.uid,
+                            'timestamp': DateTime.now(),
+                            'messageType': 'sender',
+                            'username': user.username,
+                          });
+                        }
+                        // setState(() {
+                        //   messages.add(
+                        //     ChatMessage(
+                        //         messageContent: _textEditingController.text,
+                        //         messageType: "sender"),
+                        //   );
+                        // });
+                        _textEditingController.clear();
                       },
                       child: Icon(
                         Icons.send,
