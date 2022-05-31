@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -169,6 +170,7 @@ class _PostProductState extends State<PostProduct> {
 
   @override
   Widget build(BuildContext context) {
+    String dropdownValue = 'One';
     final model.User user = Provider.of<UserProvider>(context).getUser;
 
     return Scaffold(
@@ -247,6 +249,37 @@ class _PostProductState extends State<PostProduct> {
                         controller: _categoryController,
                         label: 'Select Category',
                       ),
+                      // StreamBuilder<QuerySnapshot>(
+                      //   stream: FirebaseFirestore.instance
+                      //       .collection('categories')
+                      //       .snapshots(),
+                      //   builder: (context, snapshot) {
+                      //     if (!snapshot.hasData) {
+                      //       Text('Loading...');
+                      //     }
+                      //     List<DropdownMenuItem> categoryItem = [];
+                      //     for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                      //       DocumentSnapshot doc = snapshot.data!.docs[i];
+                      //       categoryItem.add(
+                      //         DropdownMenuItem(
+                      //           child: Text(doc.id),
+                      //           value: doc.id,
+                      //         ),
+                      //       );
+                      //     }
+                      //     return Row(
+                      //       children: [
+                      //         Icon(Icons.category),
+                      //         DropdownButton(
+                      //           items: categoryItem,
+                      //           onChanged:
+                      //           value: dropdownValue,
+                      //           isExpanded: false,
+                      //         ),
+                      //       ],
+                      //     );
+                      //   },
+                      // ),
                       SizedBox(
                         height: 20,
                       ),

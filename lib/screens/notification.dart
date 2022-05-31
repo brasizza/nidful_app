@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,15 +47,34 @@ class _NotificationPageState extends State<NotificationPage> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: 10,
-                    itemBuilder: (BuildContext context, int index) {
-                      return NotificationsList();
+                  FutureBuilder(
+                    future: FirebaseFirestore.instance
+                        .collection('Vetnotifications')
+                        .where(
+                          'receiver',
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid,
+                        )
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: (snapshot.data! as dynamic).docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return NotificationsList(
+                            snap:
+                                (snapshot.data! as dynamic).docs[index].data(),
+                          );
+                        },
+                      );
                     },
-                  )
+                  ),
                 ],
               ),
             ),

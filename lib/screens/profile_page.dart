@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/resources/firestore_methods.dart';
+import 'package:nidful/screens/detail_page.dart';
 import 'package:nidful/screens/edit_profile.dart';
 import 'package:nidful/screens/post_product.dart';
 import 'package:nidful/screens/settings.dart';
@@ -54,8 +55,9 @@ class _ProfilePageState extends State<ProfilePage> {
           .get();
       productLength = postSnap.docs.length;
       userData = userSnap.data()!;
-      followers = userData['followers'].length;
-      following = userData['following'].length;
+      userData = userSnap.data()!;
+      followers = userSnap.data()!['followers'].length;
+      following = userSnap.data()!['following'].length;
       isFollowing = userSnap
           .data()!['followers']
           .contains(FirebaseAuth.instance.currentUser!.uid);
@@ -90,7 +92,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               centerTitle: true,
               title: Text(
-                "${userData['firstname'] != '' ? userData['firstname'] : 'Please fill your profile'} ${userData['lastname'] ?? ''}",
+                FirebaseAuth.instance.currentUser!.uid == widget.uid
+                    ? "${userData['firstname'] != '' ? userData['firstname'] : 'Please fill your profile'} ${userData['lastname'] ?? ''}"
+                    : '',
                 style: GoogleFonts.workSans(
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
@@ -289,7 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             followers--;
                                           });
                                         },
-                                      )
+                                      ),
                           ],
                         ),
                         SizedBox(height: 30),
@@ -320,15 +324,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                 itemBuilder: (context, index) {
                                   DocumentSnapshot snap =
                                       (snapshot.data! as dynamic).docs[index];
-                                  return Container(
-                                    width: 200,
-                                    height: 108,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: Image.network(
-                                          snap['postUrl'],
-                                          fit: BoxFit.cover,
-                                        ).image,
+                                  return InkWell(
+                                    onTap: () => DetailPage(snap: snap),
+                                    child: Container(
+                                      width: 200,
+                                      height: 108,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: Image.network(
+                                            snap['postUrl'],
+                                            fit: BoxFit.cover,
+                                          ).image,
+                                        ),
                                       ),
                                     ),
                                   );

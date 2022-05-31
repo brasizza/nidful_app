@@ -7,9 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/screens/detail_page.dart';
 import 'package:nidful/widgets/item_list.dart';
 
-class CatList extends StatelessWidget {
+class CatLList extends StatelessWidget {
   final String search;
-  const CatList({Key? key, required this.search}) : super(key: key);
+  const CatLList({Key? key, required this.search}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class CatList extends StatelessWidget {
         child: FutureBuilder(
           future: FirebaseFirestore.instance
               .collection('products')
-              .where('title', isGreaterThanOrEqualTo: search)
+              .where('category', isGreaterThanOrEqualTo: search)
               .get(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
@@ -57,7 +57,6 @@ class CatList extends StatelessWidget {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    // print((snapshot.data! as dynamic).docs[index].data());
                     Get.to(() => DetailPage(
                           snap: (snapshot.data! as dynamic).docs[index].data(),
                         ));

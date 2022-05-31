@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nidful/models/post.dart';
 import 'package:nidful/resources/storage_methods.dart';
+import 'package:nidful/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
 class FireStoreMethods {
@@ -125,6 +126,103 @@ class FireStoreMethods {
       res = 'success';
     } catch (e) {
       print(e.toString());
+    }
+
+    return res;
+  }
+
+  Future<String> getItem({
+    required String postId,
+    required String uid,
+    required String requester,
+    required String username,
+  }) async {
+    String res = 'Some error occured';
+    String rand = const Uuid().v1();
+    try {
+      if (FirebaseAuth.instance.currentUser!.uid == uid) {
+        res = 'You cant make request on your product';
+      } else {
+        await _firestore.collection('vets').doc(postId).set({
+          'requester': requester,
+          'username': username,
+          'uid': uid,
+          'postId': postId,
+          'date': DateTime.now(),
+        });
+
+        await _firestore.collection('Vetnotifications').doc(rand).set({
+          'sender': requester,
+          'receiver': uid,
+          'username': username,
+          'postId': postId,
+          'date': DateTime.now(),
+          'type': 'requesting'
+        });
+        res = 'success';
+      }
+    } catch (e) {
+      e.toString();
+    }
+
+    return res;
+  }
+
+  Future<String> itemPingPend({
+    required String postId,
+    required String uid,
+    required String requester,
+    required String username,
+  }) async {
+    String res = 'Some error occured';
+    try {
+      String Vid = const Uuid().v1();
+
+      // var getData = await _firestore
+      //     .collection('vetsPing')
+      //     .where('requester', isEqualTo: requester)
+      //     .get();
+      // if() {
+
+      // }
+
+      await _firestore.collection('vetsPing').doc(Vid).set({
+        'requester': requester,
+        'username': username,
+        'uid': uid,
+        'postId': postId,
+        'date': DateTime.now(),
+        'status': 'pending',
+      });
+
+      res = 'success';
+    } catch (e) {
+      e.toString();
+    }
+
+    return res;
+  }
+
+  Future<String> itemPingReject({
+    required String postId,
+    required String uid,
+    required String requester,
+    required String username,
+  }) async {
+    String res = 'Some error occured';
+    String Vid = const Uuid().v1();
+    try {
+      await _firestore.collection('vetsPing').doc(Vid).set({
+        'requester': requester,
+        'username': username,
+        'uid': uid,
+        'postId': postId,
+        'date': DateTime.now(),
+        'status': 'rejected',
+      });
+      res = 'success';
+    } catch (e) {
+      e.toString();
     }
 
     return res;

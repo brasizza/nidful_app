@@ -1,12 +1,18 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nidful/models/user.dart' as model;
+import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/resources/firestore_methods.dart';
 import 'package:nidful/screens/profile_page.dart';
+import 'package:nidful/utils/utils.dart';
 import 'package:nidful/widgets/follow_button.dart';
+import 'package:provider/provider.dart';
 import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class DetailPage extends StatefulWidget {
@@ -19,10 +25,13 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  bool isLoading = false;
+  bool isLoadingReject = false;
   final controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
+    model.User user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       appBar: ScrollAppBar(
         controller: controller,
@@ -165,51 +174,114 @@ class _DetailPageState extends State<DetailPage> {
                       ]),
                 ),
                 SizedBox(height: 25),
-                ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    physics: BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Slidable(
-                          endActionPane: ActionPane(
-                            motion: StretchMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed: ((context) {}),
-                                backgroundColor: Colors.greenAccent,
-                                label: 'Give',
-                              ),
-                              SlidableAction(
-                                onPressed: ((context) {}),
-                                backgroundColor: Colors.redAccent,
-                                label: 'Reject',
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset('assets/user2.png'),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    'Sammy Kelly',
-                                    style: GoogleFonts.workSans(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              FollowButton(label: 'Requested'),
-                            ],
-                          ),
-                        ),
+                FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('vets')
+                      .where('postId', isEqualTo: widget.snap['postId'])
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
                       );
-                    }),
+                    }
+                    return ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      physics: BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: (snapshot.data! as dynamic).docs.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Slidable(
+                            endActionPane: ActionPane(
+                              motion: StretchMotion(),
+                              children: [
+                                FirebaseAuth.instance.currentUser!.uid ==
+                                        widget.snap['uid']
+                                    ? SlidableAction(
+                                        onPressed: ((context) async {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          String res = await FireStoreMethods()
+                                              .itemPingPend(
+                                            postId: widget.snap['postId'],
+                                            uid: widget.snap['uid'],
+                                            requester: FirebaseAuth
+                                                .instance.currentUser!.uid,
+                                            username: user.username,
+                                          );
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                          if (res != 'success') {
+                                            showSnackBar(res, context);
+                                          } else {
+                                            showSnackBar(
+                                                'Request has been sent',
+                                                context);
+                                          }
+                                        }),
+                                        backgroundColor: Colors.greenAccent,
+                                        label:
+                                            isLoading ? 'Sending.....' : 'Give',
+                                      )
+                                    : Text(''),
+                                FirebaseAuth.instance.currentUser!.uid ==
+                                        widget.snap['uid']
+                                    ? SlidableAction(
+                                        onPressed: ((context) async {
+                                          setState(() {
+                                            isLoadingReject = true;
+                                          });
+                                          await FireStoreMethods()
+                                              .itemPingReject(
+                                            postId: widget.snap['postId'],
+                                            uid: widget.snap['uid'],
+                                            requester: FirebaseAuth
+                                                .instance.currentUser!.uid,
+                                            username: user.username,
+                                          );
+                                          showSnackBar(
+                                              'Request rejected', context);
+                                          setState(() {
+                                            isLoadingReject = false;
+                                          });
+                                        }),
+                                        backgroundColor: Colors.redAccent,
+                                        label: isLoadingReject
+                                            ? 'Sending...'
+                                            : 'Reject',
+                                      )
+                                    : Text(''),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Image.asset('assets/user2.png'),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      (snapshot.data! as dynamic).docs[index]
+                                          ['username'],
+                                      style: GoogleFonts.workSans(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                FollowButton(label: 'Requested'),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ],
             ),
           ),

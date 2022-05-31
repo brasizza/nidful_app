@@ -18,7 +18,7 @@ class CategoryWidget extends StatelessWidget {
           height: 250,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(image),
+              image: NetworkImage(image),
             ),
           ),
         ),
