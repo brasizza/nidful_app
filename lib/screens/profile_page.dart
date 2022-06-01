@@ -76,14 +76,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   checkVet() async {
     try {
-      var checkSnap = await FirebaseFirestore.instance
-          .collection('vet')
+      var dataSnap = await FirebaseFirestore.instance
+          .collection('vets')
           .where('requester', isEqualTo: widget.uid)
+          .where('status', isEqualTo: 'accepted')
           .get();
-      check = checkSnap.docs.first.data();
-      print(checkSnap);
-      if (check['status'] == 'accepted' &&
-          check['uid'] == FirebaseAuth.instance.currentUser!.uid) {
+      var data = dataSnap.docs;
+      print(data);
+      if (data.isEmpty) {
+        setState(() {
+          showMsg = false;
+        });
+      } else {
         setState(() {
           showMsg = true;
         });
@@ -260,7 +264,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: 15,
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // Button(label: 'Message John', width: 150, height: 40),
                             FirebaseAuth.instance.currentUser!.uid == widget.uid
@@ -317,23 +321,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                           });
                                         },
                                       ),
-                            Button(
-                              label: 'Message',
-                              load: Text(
-                                'Message',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              color: primaryColor,
-                              textcolor: Colors.white,
-                              width: 150,
-                              height: 40,
-                              function: () {
-                                Get.to(
-                                  () => ChatPage(receiver: widget.uid),
-                                );
-                              },
+                            SizedBox(
+                              width: 10,
                             ),
                             showMsg
                                 ? Button(
@@ -348,8 +337,32 @@ class _ProfilePageState extends State<ProfilePage> {
                                     textcolor: Colors.white,
                                     width: 150,
                                     height: 40,
+                                    function: () {
+                                      Get.to(
+                                        () => ChatPage(receiver: widget.uid),
+                                      );
+                                    },
                                   )
                                 : Container(),
+
+                            // Button(
+                            //     label: 'Message',
+                            //     load: Text(
+                            //       'Message',
+                            //       style: TextStyle(
+                            //         color: Colors.white,
+                            //       ),
+                            //     ),
+                            //     color: primaryColor,
+                            //     textcolor: Colors.white,
+                            //     width: 150,
+                            //     height: 40,
+                            //     function: () {
+                            //       Get.to(
+                            //         () => ChatPage(receiver: widget.uid),
+                            //       );
+                            //     },
+                            //   )
                           ],
                         ),
                         SizedBox(height: 30),
