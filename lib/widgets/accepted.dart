@@ -13,15 +13,15 @@ import 'package:nidful/utils/utils.dart';
 import 'package:nidful/widgets/circle_icon.dart';
 import 'package:provider/provider.dart';
 
-class NotificationsList extends StatefulWidget {
+class AcceptedList extends StatefulWidget {
   final snap;
-  const NotificationsList({Key? key, this.snap}) : super(key: key);
+  const AcceptedList({Key? key, this.snap}) : super(key: key);
 
   @override
-  State<NotificationsList> createState() => _NotificationsListState();
+  State<AcceptedList> createState() => _AcceptedListState();
 }
 
-class _NotificationsListState extends State<NotificationsList> {
+class _AcceptedListState extends State<AcceptedList> {
   var data;
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _NotificationsListState extends State<NotificationsList> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (widget.snap['type'] == 'requesting')
+                if (widget.snap['status'] == 'accepted')
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -68,7 +68,7 @@ class _NotificationsListState extends State<NotificationsList> {
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Text(
-                        "${widget.snap['username']} requesting for a product",
+                        "${widget.snap['username']} accepted your request for a product",
                         style: GoogleFonts.workSans(fontSize: 10),
                       ),
                       SizedBox(

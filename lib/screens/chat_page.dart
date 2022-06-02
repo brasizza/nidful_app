@@ -25,18 +25,6 @@ class _ChatPageState extends State<ChatPage> {
   var data;
   final _textEditingController = TextEditingController();
 
-  List<ChatMessage> messages = [
-    ChatMessage(messageContent: "Hello, Precious", messageType: "receiver"),
-    ChatMessage(messageContent: "How have you been?", messageType: "receiver"),
-    ChatMessage(
-        messageContent: "Hey John, I am doing fine dude. wbu?",
-        messageType: "sender"),
-    ChatMessage(messageContent: "ehhhh, doing OK.", messageType: "receiver"),
-    ChatMessage(
-        messageContent: "How do you wanna get your product John",
-        messageType: "sender"),
-  ];
-
   @override
   void initState() {
     // TODO: implement initState
@@ -187,6 +175,8 @@ class _ChatPageState extends State<ChatPage> {
                                 .doc(widget.receiver)
                                 .set({
                               "last_message": _textEditingController.text,
+                              'time': FieldValue.serverTimestamp(),
+                              'read': false,
                             });
                           });
 
@@ -209,6 +199,8 @@ class _ChatPageState extends State<ChatPage> {
                                 .doc(user.uid)
                                 .set({
                               "last_message": _textEditingController.text,
+                              'time': FieldValue.serverTimestamp(),
+                              'read': false,
                             });
                           });
                         }

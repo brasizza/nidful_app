@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/models/user.dart' as model;
@@ -14,6 +15,7 @@ import 'package:nidful/utils/utils.dart';
 import 'package:nidful/widgets/follow_button.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_app_bar/scroll_app_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DetailPage extends StatefulWidget {
   final snap;
@@ -25,6 +27,34 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  var userData = {};
+  bool isFollowing = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.snap['uid'])
+          .get();
+
+      userData = userSnap.data()!;
+      userData = userSnap.data()!;
+      isFollowing = userSnap
+          .data()!['followers']
+          .contains(FirebaseAuth.instance.currentUser!.uid);
+      setState(() {});
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+  }
+
   bool isLoading = false;
   bool isLoadingReject = false;
   final controller = ScrollController();
@@ -92,15 +122,17 @@ class _DetailPageState extends State<DetailPage> {
                               style: GoogleFonts.workSans(
                                   fontWeight: FontWeight.w500),
                             ),
-                            Text(
-                              'We rise by lifting others!',
-                              style: GoogleFonts.workSans(),
-                            ),
+                            // Text(
+                            //   'We rise by lifting others!',
+                            //   style: GoogleFonts.workSans(),
+                            // ),
                           ],
                         ),
                       ],
                     ),
-                    FollowButton(),
+                    FollowButton(
+                      label: isFollowing ? 'Following' : 'Follow',
+                    ),
                   ],
                 ),
                 SizedBox(height: 30),
@@ -130,8 +162,8 @@ class _DetailPageState extends State<DetailPage> {
                                             widget.snap['uid'],
                                             widget.snap['likes']);
                                       },
-                                      child: Icon(
-                                        Icons.thumb_up,
+                                      child: SvgPicture.asset(
+                                        'assets/LIKE.svg',
                                         color: widget.snap['likes']
                                                 .contains(widget.snap['uid'])
                                             ? Colors.red
@@ -146,10 +178,16 @@ class _DetailPageState extends State<DetailPage> {
                                   ],
                                 ),
                                 SizedBox(width: 15),
-                                Icon(Icons.share_outlined),
+                                SvgPicture.asset(
+                                  'assets/SHARE.svg',
+                                  color: Colors.black,
+                                ),
                               ],
                             ),
-                            Icon(Icons.bookmark_outline),
+                            SvgPicture.asset(
+                              'assets/BOOKMARK.svg',
+                              color: Colors.black,
+                            ),
                           ],
                         ),
                       ),
@@ -210,12 +248,13 @@ class _DetailPageState extends State<DetailPage> {
                                             isLoading = true;
                                           });
                                           String res = await FireStoreMethods()
-                                              .itemPingPend(
+                                              .itemPingAccept(
                                             postId: widget.snap['postId'],
                                             uid: widget.snap['uid'],
                                             requester: FirebaseAuth
                                                 .instance.currentUser!.uid,
                                             username: user.username,
+                                            giver: widget.snap['username'],
                                           );
                                           setState(() {
                                             isLoading = false;
@@ -223,9 +262,17 @@ class _DetailPageState extends State<DetailPage> {
                                           if (res != 'success') {
                                             showSnackBar(res, context);
                                           } else {
-                                            showSnackBar(
-                                                'Request has been sent',
-                                                context);
+                                            // showSnackBar(
+                                            //     'Request has been sent',
+                                            //     context);
+                                            Fluttertoast.showToast(
+                                                msg: 'Request has been sent',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.BOTTOM,
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.black,
+                                                textColor: Colors.white,
+                                                fontSize: 16.0);
                                           }
                                         }),
                                         backgroundColor: Colors.greenAccent,
@@ -247,6 +294,7 @@ class _DetailPageState extends State<DetailPage> {
                                             requester: FirebaseAuth
                                                 .instance.currentUser!.uid,
                                             username: user.username,
+                                            giver: widget.snap['username'],
                                           );
                                           showSnackBar(
                                               'Request rejected', context);

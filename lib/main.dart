@@ -9,6 +9,8 @@ import 'package:get/get.dart';
 import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/login.dart';
 import 'package:flutter/services.dart';
+import 'package:nidful/screens/on_board.dart';
+import 'package:nidful/service/not.dart';
 import 'package:nidful/widgets/bottom_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +19,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  LocalNotificationService.initialize();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
@@ -63,7 +66,7 @@ class MyApp extends StatelessWidget {
                   );
                 }
 
-                return LoginPage();
+                return OnBoradScreen();
               },
             ),
           ),

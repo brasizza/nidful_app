@@ -27,7 +27,7 @@ class SingleMessage extends StatelessWidget {
           child: Text(
             message,
             style: TextStyle(
-              color: Colors.white,
+              color: isMe ? Colors.white : Colors.black,
               fontSize: 16,
             ),
           ),

@@ -42,6 +42,7 @@ class AuthMethod {
           photoUrl: '',
           followers: [],
           following: [],
+          token: '',
         );
 
         await _firestore
@@ -50,6 +51,18 @@ class AuthMethod {
             .set(user.toJson());
 
         res = "success";
+      } else {
+        res = "Please enter all the fields";
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        res = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        res = 'The account already exists for that email.';
+      } else if (e.code == 'invalid-email') {
+        res = 'The email address is badly formatted.';
+      } else {
+        res = "Please enter all the fields";
       }
     } catch (err) {
       res = err.toString();
@@ -70,6 +83,16 @@ class AuthMethod {
         res = 'success';
       } else {
         res = 'Please enter all fields';
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password') {
+        res = 'Wrong password.';
+      } else if (e.code == 'user-not-found') {
+        res = 'User with this email not found.';
+      } else if (e.code == 'user-disabled') {
+        res = 'User with this email has been disabled.';
+      } else {
+        res = 'Some error occured';
       }
     } catch (err) {
       res = err.toString();

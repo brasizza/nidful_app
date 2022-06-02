@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/constant/constants.dart';
 
 class Button extends StatelessWidget {
@@ -8,6 +9,8 @@ class Button extends StatelessWidget {
   final double? height;
   final Color? color;
   final Color? textcolor;
+  final double? fontsize;
+
   final Function()? function;
   const Button(
       {Key? key,
@@ -17,6 +20,7 @@ class Button extends StatelessWidget {
       this.color,
       this.textcolor,
       this.function,
+      this.fontsize,
       this.load})
       : super(key: key);
 
@@ -35,7 +39,8 @@ class Button extends StatelessWidget {
           child: load ??
               Text(
                 label,
-                style: TextStyle(color: textcolor ?? Colors.white),
+                style: GoogleFonts.workSans(
+                    color: textcolor ?? Colors.white, fontSize: fontsize ?? 20),
               ),
         ),
       ),

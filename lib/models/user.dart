@@ -8,6 +8,7 @@ class User {
   final String photoUrl;
   final String username;
   final String bio;
+  final String token;
   final List followers;
   final List following;
 
@@ -19,6 +20,7 @@ class User {
     required this.photoUrl,
     required this.username,
     required this.bio,
+    required this.token,
     required this.followers,
     required this.following,
   });
@@ -31,6 +33,7 @@ class User {
         'email': email,
         'photoUrl': photoUrl,
         'bio': bio,
+        'token': token,
         'followers': followers,
         'following': following,
       };
@@ -46,6 +49,7 @@ class User {
       email: snapshot['email'] ?? 'Dummy Data',
       photoUrl: snapshot['photoUrl'] ?? 'No image',
       bio: snapshot['bio'] ?? 'Dummy Data',
+      token: snapshot['token'] ?? 'Dummy Data',
       followers: snapshot['followers'] ?? [],
       following: snapshot['following'] ?? [],
     );

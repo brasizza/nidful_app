@@ -1,15 +1,19 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:nidful/models/user.dart';
+import 'package:nidful/constant/constants.dart';
+import 'package:nidful/models/user.dart' as model;
 import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/resources/firestore_methods.dart';
 import 'package:nidful/screens/detail_page.dart';
 import 'package:nidful/screens/profile_page.dart';
+import 'package:nidful/utils/utils.dart';
 import 'package:nidful/widgets/follow_button.dart';
 import 'package:nidful/widgets/like_animation.dart';
 import 'package:provider/provider.dart';
@@ -27,11 +31,39 @@ class Posts extends StatefulWidget {
 }
 
 class _PostsState extends State<Posts> {
+  var userData = {};
   bool isLikeAnimating = false;
+  bool isFollowing = false;
   var color = Colors.white;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.snap['uid'])
+          .get();
+
+      userData = userSnap.data()!;
+      userData = userSnap.data()!;
+      isFollowing = userSnap
+          .data()!['followers']
+          .contains(FirebaseAuth.instance.currentUser!.uid);
+      setState(() {});
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final User user = Provider.of<UserProvider>(context).getUser;
+    final model.User user = Provider.of<UserProvider>(context).getUser;
 
     return Scaffold(
       body: Stack(
@@ -58,7 +90,7 @@ class _PostsState extends State<Posts> {
                       image: NetworkImage(
                         widget.snap['postUrl'],
                       ),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.scaleDown,
                     ),
                   ),
                 ),
@@ -122,24 +154,34 @@ class _PostsState extends State<Posts> {
                             children: [
                               Text(
                                 widget.snap['username'],
-                                style:
-                                    GoogleFonts.workSans(color: Colors.white),
+                                style: GoogleFonts.workSans(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
                               ),
-                              Text(
-                                'We rise by lifting others',
-                                style:
-                                    GoogleFonts.workSans(color: Colors.white),
-                              ),
+                              // Text(
+                              //   'We rise by lifting others',
+                              //   style:
+                              //       GoogleFonts.workSans(color: Colors.black),
+                              // ),
                             ],
                           ),
                         ],
                       ),
                     ),
-                    FollowButton(
-                      label: 'Following',
-                      buttonColor: Colors.white,
-                      textColor: Colors.black,
-                    )
+                    if (isFollowing)
+                      FollowButton(
+                        label: 'Following',
+                        buttonColor: Colors.white,
+                        textColor: primaryColor,
+                      )
+                    else if (widget.snap['uid'] !=
+                        FirebaseAuth.instance.currentUser!.uid)
+                      FollowButton(
+                        label: 'Follow',
+                        buttonColor: primaryColor,
+                        textColor: Colors.white,
+                      )
                   ],
                 ),
                 SizedBox(
@@ -152,14 +194,20 @@ class _PostsState extends State<Posts> {
                       children: [
                         Text(
                           widget.snap['title'],
-                          style: GoogleFonts.workSans(color: Colors.white),
+                          style: GoogleFonts.workSans(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
                         ),
                         SizedBox(
                           height: 20,
                         ),
                         Text(
                           widget.snap['description'],
-                          style: GoogleFonts.workSans(color: Colors.grey),
+                          style: GoogleFonts.workSans(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400),
                         ),
                       ]),
                 ),

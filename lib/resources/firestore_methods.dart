@@ -104,28 +104,45 @@ class FireStoreMethods {
     String username,
     String email,
     String bio,
-    Uint8List file,
+    Uint8List? file,
   ) async {
     String res = 'Some error occured';
 
-    String photoUrl = await StorageMethods()
-        .uploadImageToStorage('profile', file, false, true);
-
-    try {
-      await _firestore
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
-        'firstname': firstname,
-        'lastname': lastname,
-        'username': username,
-        'email': email,
-        'bio': bio,
-        'photoUrl': photoUrl,
-      });
-      res = 'success';
-    } catch (e) {
-      print(e.toString());
+    if (file != null) {
+      String photoUrl = await StorageMethods()
+          .uploadImageToStorage('users', file, true, false);
+      try {
+        await _firestore
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'firstname': firstname,
+          'lastname': lastname,
+          'username': username,
+          'email': email,
+          'bio': bio,
+          'photoUrl': photoUrl,
+        });
+        res = 'success';
+      } catch (e) {
+        print(e.toString());
+      }
+    } else {
+      try {
+        await _firestore
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'firstname': firstname,
+          'lastname': lastname,
+          'username': username,
+          'email': email,
+          'bio': bio,
+        });
+        res = 'success';
+      } catch (e) {
+        print(e.toString());
+      }
     }
 
     return res;
@@ -149,11 +166,12 @@ class FireStoreMethods {
           'username': username,
           'uid': uid,
           'postId': postId,
+          'photoUrl': photoUrl,
           'status': 'pending',
           'date': DateTime.now(),
         });
 
-        await _firestore.collection('Vetnotifications').doc(rand).set({
+        await _firestore.collection('Vetnotifications').doc(postId).set({
           'sender': requester,
           'receiver': uid,
           'username': username,
@@ -170,11 +188,12 @@ class FireStoreMethods {
     return res;
   }
 
-  Future<String> itemPingPend({
+  Future<String> itemPingAccept({
     required String postId,
     required String uid,
     required String requester,
     required String username,
+    required String giver,
   }) async {
     String res = 'Some error occured';
     try {
@@ -188,13 +207,18 @@ class FireStoreMethods {
 
       // }
 
+      await _firestore.collection('vets').doc(postId).update({
+        'status': 'accepted',
+      });
+
       await _firestore.collection('vetsPing').doc(Vid).set({
+        'postId': postId,
+        'uid': uid,
         'requester': requester,
         'username': username,
-        'uid': uid,
-        'postId': postId,
+        'giver': giver,
         'date': DateTime.now(),
-        'status': 'pending',
+        'status': 'accepted',
       });
 
       res = 'success';
@@ -210,6 +234,7 @@ class FireStoreMethods {
     required String uid,
     required String requester,
     required String username,
+    required String giver,
   }) async {
     String res = 'Some error occured';
     String Vid = const Uuid().v1();
@@ -217,6 +242,7 @@ class FireStoreMethods {
       await _firestore.collection('vetsPing').doc(Vid).set({
         'requester': requester,
         'username': username,
+        'giver': giver,
         'uid': uid,
         'postId': postId,
         'date': DateTime.now(),
@@ -238,6 +264,10 @@ class FireStoreMethods {
       await _firestore.collection('vets').doc(postId).update({
         'status': 'accepted',
       });
+
+      // await _firestore.collection('Vetnotifications').doc(postId).update({
+      //   'type': 'accepted',
+      // });
       res = 'success';
     } catch (e) {
       e.toString();
@@ -245,4 +275,30 @@ class FireStoreMethods {
 
     return res;
   }
+
+  // Future<String> acceptedVet({
+  //   required String postId,
+  //   required String username,
+  //   required String requester,
+  // }) async {
+  //   String res = 'Some error occured';
+  //   try {
+  //     await _firestore
+  //         .collection('Vetnotifications')
+  //         .doc(postId)
+  //         .collection('getNotify')
+  //         .doc(requester)
+  //         .set({
+  //       'type': 'accepted',
+  //       'username': username,
+  //       'requester': requester,
+  //       'postId': postId,
+  //     });
+  //     res = 'success';
+  //   } catch (e) {
+  //     e.toString();
+  //   }
+
+  //   return res;
+  // }
 }

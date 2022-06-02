@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nidful/screens/chat_page.dart';
-import 'package:nidful/widgets/messages.dart';
+// import 'package:nidful/widgets/messages.dart';
+import 'package:intl/intl.dart';
 
 class MessageList extends StatelessWidget {
   const MessageList({Key? key}) : super(key: key);
@@ -58,6 +59,8 @@ class MessageList extends StatelessWidget {
               itemBuilder: (context, index) {
                 var friendId = snapshot.data.docs[index].id;
                 var lastMsg = snapshot.data.docs[index]['last_message'];
+                var date = snapshot.data.docs[index]['time'];
+                var read = snapshot.data.docs[index]['read'];
                 return FutureBuilder(
                   future: FirebaseFirestore.instance
                       .collection('users')
@@ -82,35 +85,62 @@ class MessageList extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        trailing: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '09:56PM',
-                              style: GoogleFonts.workSans(
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Container(
-                                height: 16,
-                                width: 16,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '1',
+                        trailing: read == false
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '${DateFormat.Hms().format(date.toDate())}',
                                     style: GoogleFonts.workSans(
-                                        color: Colors.white),
+                                        fontWeight: FontWeight.w500),
                                   ),
+                                  Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Container(
+                                        height: 16,
+                                        width: 16,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '1',
+                                            style: GoogleFonts.workSans(
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      )),
+                                ],
+                              )
+                            : Container(
+                                child: Text(
+                                  '${DateFormat.Hms().format(date.toDate())}',
+                                  style: GoogleFonts.workSans(
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
+                        onTap: () async {
+                          if (friend['uid'] !=
+                              FirebaseAuth.instance.currentUser!.uid) {
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(FirebaseAuth.instance.currentUser!.uid)
+                                .collection('messages')
+                                .doc(friendId)
+                                .update({
+                              'read': true,
+                            });
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(friendId)
+                                .collection('messages')
+                                .doc(FirebaseAuth.instance.currentUser!.uid)
+                                .update({
+                              'read': true,
+                            });
+                          }
                           Get.to(
                             () => ChatPage(
                               receiver: friend['uid'],
