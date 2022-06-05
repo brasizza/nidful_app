@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -72,128 +73,162 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.height;
+    ScreenUtil().setSp(16);
     return Scaffold(
-        body: SingleChildScrollView(
-      child: Column(children: [
-        Container(
-          height: 250,
-          width: 500,
-          // color: Colors.red,
-          child: FittedBox(
-            fit: BoxFit.fill,
-            child: Image.asset('assets/slide3.png'),
-          ),
-        ),
-        SizedBox(
-          height: 30,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Sign In',
-                style: GoogleFonts.workSans(
-                    color: Colors.black,
-                    fontSize: 23,
-                    fontWeight: FontWeight.w500),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Sign in to continue an awesome experience',
-                style: GoogleFonts.workSans(color: Colors.black),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              InputWidget(
-                controller: _emailController,
-                label: 'Email Address',
-                hint: 'johndoe@email.com',
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              InputWidget(
-                controller: _passwordController,
-                label: 'Password',
-                isObscure: true,
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Center(
-                child: InkWell(
-                  onTap: () {
-                    Get.to(() => BottomBar());
-                  },
-                  child: InkWell(
-                    onTap: loginUser,
-                    child: Container(
-                      width: double.infinity,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: primaryColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: _isLoading
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                'Login',
-                                style: TextStyle(color: Colors.white),
-                              ),
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height / 2.5,
+            child: Stack(
+              // fit: StackFit.expand,
+              overflow: Overflow.visible,
+              children: [
+                Positioned(
+                  top: -60,
+                  right: 0,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage('assets/slide3.png'),
                       ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                InkWell(
-                  onTap: () {
-                    Get.to(() => RegisterPage());
-                  },
-                  child: RichText(
-                      text: TextSpan(
-                    text: 'Don\'t have an account? ',
-                    style:
-                        GoogleFonts.workSans(color: Colors.black, fontSize: 10),
-                    children: [
-                      TextSpan(
-                        text: 'Register',
-                        style: GoogleFonts.workSans(
-                          fontSize: 10,
+              ],
+            ),
+          ),
+          // Expanded(child: Container()),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 30,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Sign In',
+                  style: GoogleFonts.workSans(
+                      color: Colors.black,
+                      fontSize: 23.sp,
+                      fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Sign in to continue an awesome experience',
+                  style: GoogleFonts.workSans(color: Colors.black),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                InputWidget(
+                  height: MediaQuery.of(context).size.height / 13,
+                  controller: _emailController,
+                  label: 'Email Address',
+                  hint: 'johndoe@email.com',
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                InputWidget(
+                  height: MediaQuery.of(context).size.height / 13,
+                  controller: _passwordController,
+                  label: 'Password',
+                  isObscure: true,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 20,
+                ),
+                Center(
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => BottomBar());
+                    },
+                    child: InkWell(
+                      onTap: loginUser,
+                      child: Container(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height / 13,
+                        decoration: BoxDecoration(
                           color: primaryColor,
-                          fontWeight: FontWeight.bold,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: _isLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'Login',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                         ),
                       ),
-                    ],
-                  )),
+                    ),
+                  ),
                 ),
-                InkWell(
-                  onTap: () {
-                    Get.to(() => ForgotPasswordPage());
-                  },
-                  child: RichText(
-                      text: TextSpan(
-                    text: 'Forgot Password ',
-                    style:
-                        GoogleFonts.workSans(color: Colors.black, fontSize: 10),
-                  )),
+                SizedBox(
+                  height: 20,
                 ),
-              ])
-            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Get.to(() => RegisterPage());
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Don\'t have an account? ',
+                          style: GoogleFonts.workSans(
+                            color: Colors.black,
+                            fontSize: 16.sp,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'Register',
+                              style: GoogleFonts.workSans(
+                                // fontSize: 10,
+                                fontSize: 10,
+                                color: primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.to(() => ForgotPasswordPage());
+                      },
+                      child: RichText(
+                          text: TextSpan(
+                        text: 'Forgot Password ',
+                        style: GoogleFonts.workSans(
+                          color: Colors.black,
+                          // fontSize: 10,
+                          fontSize: 10,
+                        ),
+                      )),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
-        ),
-      ]),
-    ));
+        ],
+      )),
+    );
   }
 }

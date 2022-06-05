@@ -9,6 +9,7 @@ class InputWidget extends StatefulWidget {
   final String? hint;
   final double? height;
   final bool isObscure;
+  final double? fsize;
   final TextEditingController? controller;
 
   const InputWidget(
@@ -17,7 +18,8 @@ class InputWidget extends StatefulWidget {
       this.hint,
       this.isObscure = false,
       this.height,
-      this.controller})
+      this.controller,
+      this.fsize})
       : super(key: key);
 
   @override
@@ -31,7 +33,9 @@ class _InputWidgetState extends State<InputWidget> {
       Text(
         widget.label,
         style: GoogleFonts.workSans(
-            color: Colors.black, fontWeight: FontWeight.w500),
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            fontSize: widget.fsize ?? 16),
       ),
       SizedBox(height: 3),
       Container(
@@ -46,7 +50,9 @@ class _InputWidgetState extends State<InputWidget> {
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: widget.hint,
-              hintStyle: GoogleFonts.workSans(),
+              hintStyle: GoogleFonts.workSans(
+                fontSize: widget.fsize ?? 15,
+              ),
             ),
             obscureText: widget.isObscure,
           )),

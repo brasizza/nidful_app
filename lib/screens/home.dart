@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entry/entry.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -74,176 +75,186 @@ class _HomePageState extends State<HomePage> {
         : Scaffold(
             body: SafeArea(
               child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Appbar
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Hi ${user.username} 👋',
-                                      style: GoogleFonts.workSans(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    Text(
-                                      'What are you giving out today?',
-                                      style: GoogleFonts.workSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => Get.to(() => PostProduct()),
-                                      child: CircleIcon(
-                                          isSvg: true, icon: 'assets/PLUS.svg'),
-                                    ),
-                                    SizedBox(
-                                      width: 7,
-                                    ),
-                                    Stack(
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            Get.to(() => MessageList());
-                                          },
-                                          child: CircleIcon(
+                child: Entry.all(
+                  duration: Duration(seconds: 2),
+                  child: Column(
+                    children: [
+                      // Appbar
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Hi ${user.username} 👋',
+                                        style: GoogleFonts.workSans(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(
+                                        'What are you giving out today?',
+                                        style: GoogleFonts.workSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () =>
+                                            Get.to(() => PostProduct()),
+                                        child: CircleIcon(
                                             isSvg: true,
-                                            icon: 'assets/MSG.svg',
-                                          ),
-                                        ),
-                                        Positioned(
-                                          top: 0,
-                                          right: 0,
-                                          child: Container(
-                                            width: 13,
-                                            height: 13,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xffFF0000),
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
+                                            icon: 'assets/PLUS.svg'),
+                                      ),
+                                      SizedBox(
+                                        width: 7,
+                                      ),
+                                      Stack(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              Get.to(() => MessageList());
+                                            },
+                                            child: CircleIcon(
+                                              isSvg: true,
+                                              icon: 'assets/MSG.svg',
                                             ),
-                                            child: Center(
-                                              child: Text(
-                                                '2',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 8),
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Container(
+                                              width: 13,
+                                              height: 13,
+                                              decoration: BoxDecoration(
+                                                color: Color(0xffFF0000),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '2',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 8),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ]),
+                            // Serchbar
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: InputWidget(
+                                      controller: searchController,
+                                      label: '',
+                                      height: 50,
+                                      hint: 'Search'),
                                 ),
-                              ]),
-                          // Serchbar
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: InputWidget(
-                                    controller: searchController,
-                                    label: '',
-                                    height: 50,
-                                    hint: 'Search'),
-                              ),
-                              SizedBox(width: 7),
-                              Column(
-                                children: [
-                                  SizedBox(height: 16),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Get.to(() => CatList(
-                                            search: searchController.text,
-                                          ));
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(15),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: primaryColor,
-                                      ),
-                                      child: Center(
-                                        child: SvgPicture.asset(
-                                          'assets/FILTER.svg',
-                                          color: Colors.white,
+                                SizedBox(width: 7),
+                                Column(
+                                  children: [
+                                    SizedBox(height: 16),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Get.to(() => CatList(
+                                              search: searchController.text,
+                                            ));
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(15),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: primaryColor,
+                                        ),
+                                        child: Center(
+                                          child: SvgPicture.asset(
+                                            'assets/FILTER.svg',
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 2,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Container(
-                        child: StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('categories')
-                              .snapshots(),
-                          builder: (context,
-                              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                                  snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            return StaggeredGridView.countBuilder(
-                              physics: ScrollPhysics(),
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 1,
-                              mainAxisSpacing: 16,
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (BuildContext context, int index) =>
-                                  InkWell(
-                                onTap: () {
-                                  Get.to(() => CatLList(
-                                        search: snapshot.data!.docs[index]
-                                            .data()['cat_name'],
-                                      ));
-                                },
-                                child: CategoryWidget(
-                                  label: snapshot.data!.docs[index]
-                                      .data()['cat_name'],
-                                  image: snapshot.data!.docs[index]
-                                      .data()['cat_img'],
+                                  ],
                                 ),
-                              ),
-                              staggeredTileBuilder: (int index) =>
-                                  StaggeredTile.fit(1),
-                              // mainAxisSpacing: 4.0,
-                              // crossAxisSpacing: 4.0,
-                            );
-                          },
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          child: StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('categories')
+                                .snapshots(),
+                            builder: (context,
+                                AsyncSnapshot<
+                                        QuerySnapshot<Map<String, dynamic>>>
+                                    snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              return StaggeredGridView.countBuilder(
+                                physics: ScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 13,
+                                mainAxisSpacing: 16,
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) =>
+                                        InkWell(
+                                  onTap: () {
+                                    Get.to(() => CatLList(
+                                          search: snapshot.data!.docs[index]
+                                              .data()['cat_name'],
+                                        ));
+                                  },
+                                  child: CategoryWidget(
+                                    label: snapshot.data!.docs[index]
+                                        .data()['cat_name'],
+                                    image: snapshot.data!.docs[index]
+                                        .data()['cat_img'],
+                                  ),
+                                ),
+                                staggeredTileBuilder: (int index) =>
+                                    StaggeredTile.fit(1),
+                                // mainAxisSpacing: 4.0,
+                                // crossAxisSpacing: 4.0,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

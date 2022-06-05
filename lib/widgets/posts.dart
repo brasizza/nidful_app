@@ -16,6 +16,8 @@ import 'package:nidful/screens/profile_page.dart';
 import 'package:nidful/utils/utils.dart';
 import 'package:nidful/widgets/follow_button.dart';
 import 'package:nidful/widgets/like_animation.dart';
+import 'package:palette_generator/palette_generator.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
 class Posts extends StatefulWidget {
@@ -41,6 +43,17 @@ class _PostsState extends State<Posts> {
     // TODO: implement initState
     super.initState();
     getData();
+    _updatePalletes();
+  }
+
+  _updatePalletes() async {
+    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+      NetworkImage(widget.snap['postUrl']),
+      size: Size(200, 200),
+    );
+    setState(() {
+      color = generator.dominantColor?.color ?? Colors.black;
+    });
   }
 
   getData() async {
@@ -85,12 +98,14 @@ class _PostsState extends State<Posts> {
               alignment: Alignment.center,
               children: [
                 Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        widget.snap['postUrl'],
-                      ),
-                      fit: BoxFit.scaleDown,
+                  // color: Colors.white,
+                  decoration: BoxDecoration(),
+                  child: PhotoView(
+                    backgroundDecoration: BoxDecoration(
+                      color: color,
+                    ),
+                    imageProvider: NetworkImage(
+                      widget.snap['postUrl'],
                     ),
                   ),
                 ),
@@ -98,12 +113,12 @@ class _PostsState extends State<Posts> {
                   duration: const Duration(milliseconds: 200),
                   opacity: isLikeAnimating ? 1.0 : 0.0,
                   child: LikeAnimation(
-                    child: Lottie.asset('assets/like.json'),
-                    // child: const Icon(
-                    //   Icons.thumb_up,
-                    //   color: Colors.white,
-                    //   size: 100,
-                    // ),
+                    // child: Lottie.asset('assets/like.json'),
+                    child: const Icon(
+                      Icons.thumb_up,
+                      color: Colors.white,
+                      size: 100,
+                    ),
                     isAnimating: isLikeAnimating,
                     duration: const Duration(milliseconds: 400),
                     onEnd: () {
@@ -155,7 +170,7 @@ class _PostsState extends State<Posts> {
                               Text(
                                 widget.snap['username'],
                                 style: GoogleFonts.workSans(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500),
                               ),
@@ -195,7 +210,7 @@ class _PostsState extends State<Posts> {
                         Text(
                           widget.snap['title'],
                           style: GoogleFonts.workSans(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w500),
                         ),
@@ -205,7 +220,7 @@ class _PostsState extends State<Posts> {
                         Text(
                           widget.snap['description'],
                           style: GoogleFonts.workSans(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w400),
                         ),
@@ -238,7 +253,7 @@ class _PostsState extends State<Posts> {
                                   height: 20,
                                   color: widget.snap['likes'].contains(user.uid)
                                       ? Colors.red
-                                      : Colors.black,
+                                      : Colors.white,
                                 ),
                               ),
                             ),
@@ -253,7 +268,7 @@ class _PostsState extends State<Posts> {
                           'assets/SHARE.svg',
                           width: 20,
                           height: 20,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ],
                     ),
@@ -261,7 +276,7 @@ class _PostsState extends State<Posts> {
                       'assets/BOOKMARK.svg',
                       width: 20,
                       height: 20,
-                      color: Colors.black,
+                      color: Colors.white24,
                     ),
                   ],
                 ),

@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entry/entry.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -58,12 +59,13 @@ class _ProfilePageState extends State<ProfilePage> {
           await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
               headers: <String, String>{
                 'Content-Type': 'application/json',
-                'Authorization': 'key=ADD-YOUR-SERVER-KEY-HERE'
+                'Authorization':
+                    'key=AAAAlxL-S0g:APA91bG4V127TrMhgehmHibjS6GIJ-qqyNUsZdZWbhigPrvdx8s3eY_gvtZqQUi5bUl08HkLQoXj1gDzg97cR6icpe8paBMdtoC10sfb1cj96BNGq2dsBc37qrkZOfIH2ewWfiR1ENed'
               },
               body: jsonEncode(<String, dynamic>{
                 'notification': <String, dynamic>{
                   'title': title,
-                  'body': 'You are followed by someone'
+                  'body': 'You have a new follower'
                 },
                 'priority': 'high',
                 'data': data,
@@ -71,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
               }));
 
       if (response.statusCode == 200) {
-        print("Yeh notificatin is sended");
+        print("Notification sent");
       } else {
         print("Error");
       }
@@ -343,6 +345,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   .instance.currentUser!.uid,
                                               userData['uid'],
                                             );
+                                            sendNotification(
+                                                'You have a new follower',
+                                                userData['token']);
                                             setState(() {
                                               isFollowing = true;
                                               followers++;
@@ -431,36 +436,40 @@ class _ProfilePageState extends State<ProfilePage> {
                                   );
                                 }
 
-                                return StaggeredGridView.countBuilder(
-                                  scrollDirection: Axis.vertical,
-                                  physics: ScrollPhysics(),
-                                  itemCount:
-                                      (snapshot.data! as dynamic).docs.length,
-                                  shrinkWrap: true,
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 0,
-                                  mainAxisSpacing: 16,
-                                  itemBuilder: (context, index) {
-                                    DocumentSnapshot snap =
-                                        (snapshot.data! as dynamic).docs[index];
-                                    return InkWell(
-                                      onTap: () => DetailPage(snap: snap),
-                                      child: Container(
-                                        width: 200,
-                                        height: 108,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: Image.network(
-                                              snap['postUrl'],
-                                              fit: BoxFit.cover,
-                                            ).image,
+                                return Entry.all(
+                                  duration: Duration(seconds: 1),
+                                  child: StaggeredGridView.countBuilder(
+                                    scrollDirection: Axis.vertical,
+                                    physics: ScrollPhysics(),
+                                    itemCount:
+                                        (snapshot.data! as dynamic).docs.length,
+                                    shrinkWrap: true,
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 0,
+                                    mainAxisSpacing: 16,
+                                    itemBuilder: (context, index) {
+                                      DocumentSnapshot snap =
+                                          (snapshot.data! as dynamic)
+                                              .docs[index];
+                                      return InkWell(
+                                        onTap: () => DetailPage(snap: snap),
+                                        child: Container(
+                                          width: 200,
+                                          height: 108,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: Image.network(
+                                                snap['postUrl'],
+                                                fit: BoxFit.cover,
+                                              ).image,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  staggeredTileBuilder: (int index) =>
-                                      StaggeredTile.fit(1),
+                                      );
+                                    },
+                                    staggeredTileBuilder: (int index) =>
+                                        StaggeredTile.fit(1),
+                                  ),
                                 );
                               },
                             ),

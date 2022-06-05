@@ -13,6 +13,7 @@ import 'package:nidful/screens/on_board.dart';
 import 'package:nidful/service/not.dart';
 import 'package:nidful/widgets/bottom_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:device_preview/device_preview.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
 
@@ -24,7 +25,9 @@ void main() async {
     statusBarColor: Colors.transparent,
   ));
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(const MyApp());
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {

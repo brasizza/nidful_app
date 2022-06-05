@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CategoryWidget extends StatelessWidget {
@@ -13,19 +14,23 @@ class CategoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: <Widget>[
+      alignment: Alignment.center,
+      children: [
         Container(
-          width: 250,
-          height: 250,
+          // color: Colors.red,
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.height * 0.35,
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
-              image: NetworkImage(image),
+              image: NetworkImage(image, scale: 1.0),
+              fit: BoxFit.fill,
             ),
           ),
         ),
         Positioned(
           bottom: 10,
-          left: 40,
+          // left: 40,
           child: Center(
             child: Container(
                 padding: const EdgeInsets.all(9.0),

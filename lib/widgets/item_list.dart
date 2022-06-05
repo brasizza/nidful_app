@@ -116,6 +116,7 @@ class _ItemListState extends State<ItemList> {
               );
               if (res != 'success') {
                 showSnackBar(res, context);
+                // print(res);
               } else {
                 showSnackBar('Request has been sent', context);
               }

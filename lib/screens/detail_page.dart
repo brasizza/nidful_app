@@ -130,9 +130,31 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                       ],
                     ),
-                    FollowButton(
-                      label: isFollowing ? 'Following' : 'Follow',
-                    ),
+                    isFollowing
+                        ? FollowButton(
+                            onPressed: () async {
+                              await FireStoreMethods().followUser(
+                                FirebaseAuth.instance.currentUser!.uid,
+                                userData['uid'],
+                              );
+                              setState(() {
+                                isFollowing = false;
+                              });
+                            },
+                            label: 'Following',
+                          )
+                        : FollowButton(
+                            label: 'Follow',
+                            onPressed: () async {
+                              await FireStoreMethods().followUser(
+                                FirebaseAuth.instance.currentUser!.uid,
+                                userData['uid'],
+                              );
+                              setState(() {
+                                isFollowing = true;
+                              });
+                            },
+                          ),
                   ],
                 ),
                 SizedBox(height: 30),

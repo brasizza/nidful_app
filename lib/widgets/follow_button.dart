@@ -7,7 +7,9 @@ class FollowButton extends StatelessWidget {
   final String? label;
   final Color? buttonColor;
   final Color? textColor;
-  const FollowButton({Key? key, this.label, this.buttonColor, this.textColor})
+  final Function? onPressed;
+  const FollowButton(
+      {Key? key, this.label, this.buttonColor, this.textColor, this.onPressed})
       : super(key: key);
 
   @override

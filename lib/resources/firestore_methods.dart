@@ -158,28 +158,37 @@ class FireStoreMethods {
     String res = 'Some error occured';
     String rand = const Uuid().v1();
     try {
-      if (FirebaseAuth.instance.currentUser!.uid == uid) {
-        res = 'You cant make request on your product';
-      } else {
-        await _firestore.collection('vets').doc(postId).set({
-          'requester': requester,
-          'username': username,
-          'uid': uid,
-          'postId': postId,
-          'photoUrl': photoUrl,
-          'status': 'pending',
-          'date': DateTime.now(),
-        });
+      var data = await _firestore
+          .collection('vets')
+          .where('postId', isEqualTo: postId)
+          .where('requester', isEqualTo: requester)
+          .get();
+      if (data.docs.isEmpty) {
+        if (FirebaseAuth.instance.currentUser!.uid == uid) {
+          res = 'You cant make request on your product';
+        } else {
+          await _firestore.collection('vets').doc(rand).set({
+            'requester': requester,
+            'username': username,
+            'uid': uid,
+            'postId': postId,
+            'photoUrl': photoUrl,
+            'status': 'pending',
+            'date': DateTime.now(),
+          });
 
-        await _firestore.collection('Vetnotifications').doc(postId).set({
-          'sender': requester,
-          'receiver': uid,
-          'username': username,
-          'postId': postId,
-          'date': DateTime.now(),
-          'type': 'requesting'
-        });
-        res = 'success';
+          await _firestore.collection('Vetnotifications').doc(postId).set({
+            'sender': requester,
+            'receiver': uid,
+            'username': username,
+            'postId': postId,
+            'date': DateTime.now(),
+            'type': 'requesting'
+          });
+          res = 'success';
+        }
+      } else {
+        res = 'You have already made a request on this product';
       }
     } catch (e) {
       e.toString();
