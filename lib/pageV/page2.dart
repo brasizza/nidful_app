@@ -18,8 +18,8 @@ class Page2 extends StatelessWidget {
             overflow: Overflow.visible,
             children: [
               Positioned(
-                top: -20,
-                right: 0,
+                top: MediaQuery.of(context).size.height * 0.001 * -1,
+                right: MediaQuery.of(context).size.width / 1000 * -40,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * 0.45,

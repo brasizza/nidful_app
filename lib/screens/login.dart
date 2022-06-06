@@ -86,8 +86,8 @@ class _LoginPageState extends State<LoginPage> {
               overflow: Overflow.visible,
               children: [
                 Positioned(
-                  top: -60,
-                  right: 0,
+                  top: MediaQuery.of(context).size.height * 0.001 * -5,
+                  right: MediaQuery.of(context).size.width / 1000 * -40,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.45,

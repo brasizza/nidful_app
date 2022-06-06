@@ -4,10 +4,12 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nidful/constant/constants.dart';
 import 'package:nidful/models/user.dart' as model;
 import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/resources/firestore_methods.dart';
@@ -26,6 +28,17 @@ class PostProduct extends StatefulWidget {
 }
 
 class _PostProductState extends State<PostProduct> {
+  // Initial Selected Value
+  String dropdownvalue = 'Please Select Category';
+
+  // List of items in our dropdown menu
+  var items = [
+    'Please Select Category',
+    'Electronics',
+    'Digital',
+    'Furniture',
+    'Normal',
+  ];
   Uint8List? _file;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
@@ -170,7 +183,6 @@ class _PostProductState extends State<PostProduct> {
 
   @override
   Widget build(BuildContext context) {
-    String dropdownValue = 'One';
     final model.User user = Provider.of<UserProvider>(context).getUser;
 
     return Scaffold(
@@ -207,6 +219,7 @@ class _PostProductState extends State<PostProduct> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       InputWidget(
                         controller: _titleController,
@@ -245,41 +258,50 @@ class _PostProductState extends State<PostProduct> {
                       SizedBox(
                         height: 20,
                       ),
-                      InputWidget(
-                        controller: _categoryController,
-                        label: 'Select Category',
-                      ),
-                      // StreamBuilder<QuerySnapshot>(
-                      //   stream: FirebaseFirestore.instance
-                      //       .collection('categories')
-                      //       .snapshots(),
-                      //   builder: (context, snapshot) {
-                      //     if (!snapshot.hasData) {
-                      //       Text('Loading...');
-                      //     }
-                      //     List<DropdownMenuItem> categoryItem = [];
-                      //     for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                      //       DocumentSnapshot doc = snapshot.data!.docs[i];
-                      //       categoryItem.add(
-                      //         DropdownMenuItem(
-                      //           child: Text(doc.id),
-                      //           value: doc.id,
-                      //         ),
-                      //       );
-                      //     }
-                      //     return Row(
-                      //       children: [
-                      //         Icon(Icons.category),
-                      //         DropdownButton(
-                      //           items: categoryItem,
-                      //           onChanged:
-                      //           value: dropdownValue,
-                      //           isExpanded: false,
-                      //         ),
-                      //       ],
-                      //     );
-                      //   },
+                      // InputWidget(
+                      //   controller: _categoryController,
+                      //   label: 'Select Category',
                       // ),
+                      Text(
+                        'Select Category',
+                        style: GoogleFonts.workSans(fontSize: 20.sp),
+                      ),
+                      SizedBox(
+                        height: 11,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.08,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: primaryColor),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: DropdownButton(
+                          isExpanded: true,
+                          // Initial Value
+                          value: dropdownvalue,
+                          underline: SizedBox(),
+
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+
+                          // Array list of items
+                          items: items.map((String items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child: Text(items),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownvalue = newValue!;
+                            });
+                          },
+                        ),
+                      ),
                       SizedBox(
                         height: 20,
                       ),

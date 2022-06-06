@@ -7,24 +7,27 @@ class FollowButton extends StatelessWidget {
   final String? label;
   final Color? buttonColor;
   final Color? textColor;
-  final Function? onPressed;
+  final Function()? function;
   const FollowButton(
-      {Key? key, this.label, this.buttonColor, this.textColor, this.onPressed})
+      {Key? key, this.label, this.buttonColor, this.textColor, this.function})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 30,
-      decoration: BoxDecoration(
-        color: buttonColor ?? Colors.black,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Center(
-        child: Text(
-          label ?? 'Following',
-          style: GoogleFonts.workSans(color: textColor ?? Colors.white),
+    return InkWell(
+      onTap: function,
+      child: Container(
+        width: 100,
+        height: 30,
+        decoration: BoxDecoration(
+          color: buttonColor ?? Colors.black,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: Text(
+            label ?? 'Following',
+            style: GoogleFonts.workSans(color: textColor ?? Colors.white),
+          ),
         ),
       ),
     );

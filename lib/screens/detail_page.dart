@@ -113,7 +113,8 @@ class _DetailPageState extends State<DetailPage> {
                                       NetworkImage(widget.snap['profImage']),
                                 ),
                         ),
-                        SizedBox(width: 10),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.02),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -130,39 +131,46 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                       ],
                     ),
-                    isFollowing
-                        ? FollowButton(
-                            onPressed: () async {
-                              await FireStoreMethods().followUser(
-                                FirebaseAuth.instance.currentUser!.uid,
-                                userData['uid'],
-                              );
-                              setState(() {
-                                isFollowing = false;
-                              });
-                            },
-                            label: 'Following',
-                          )
-                        : FollowButton(
-                            label: 'Follow',
-                            onPressed: () async {
-                              await FireStoreMethods().followUser(
-                                FirebaseAuth.instance.currentUser!.uid,
-                                userData['uid'],
-                              );
-                              setState(() {
-                                isFollowing = true;
-                              });
-                            },
-                          ),
+                    FirebaseAuth.instance.currentUser!.uid != userData['uid']
+                        ? isFollowing
+                            ? FollowButton(
+                                function: () async {
+                                  await FireStoreMethods().followUser(
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                    userData['uid'],
+                                  );
+                                  setState(() {
+                                    isFollowing = false;
+                                  });
+                                },
+                                label: 'Following',
+                              )
+                            : FollowButton(
+                                label: 'Follow',
+                                function: () async {
+                                  await FireStoreMethods().followUser(
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                    userData['uid'],
+                                  );
+                                  setState(() {
+                                    isFollowing = true;
+                                  });
+                                },
+                              )
+                        : Container(),
                   ],
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
                 Center(
                   child: Column(
                     children: [
                       ClipRRect(
-                        child: Image.network(widget.snap['postUrl']),
+                        child: Image.network(
+                          widget.snap['postUrl'],
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.57,
+                          fit: BoxFit.cover,
+                        ),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       SizedBox(height: 20),
@@ -183,6 +191,11 @@ class _DetailPageState extends State<DetailPage> {
                                             widget.snap['postId'],
                                             widget.snap['uid'],
                                             widget.snap['likes']);
+                                        // setState(() {
+                                        //   widget.snap['likes'] = int.parse(
+                                        //           widget.snap['likes'].length) +
+                                        //       1;
+                                        // });
                                       },
                                       child: SvgPicture.asset(
                                         'assets/LIKE.svg',
@@ -216,7 +229,7 @@ class _DetailPageState extends State<DetailPage> {
                     ],
                   ),
                 ),
-                SizedBox(height: 24),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.5),
                   child: Column(
@@ -238,7 +251,7 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                       ]),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 FutureBuilder(
                   future: FirebaseFirestore.instance
                       .collection('vets')
@@ -360,7 +373,10 @@ class _DetailPageState extends State<DetailPage> {
                                                 (snapshot.data! as dynamic)
                                                     .docs[index]['photoUrl']),
                                           ),
-                                    SizedBox(width: 10),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
                                     Text(
                                       (snapshot.data! as dynamic).docs[index]
                                           ['username'],

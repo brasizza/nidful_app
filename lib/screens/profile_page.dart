@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entry/entry.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -216,29 +217,34 @@ class _ProfilePageState extends State<ProfilePage> {
                               : CircleAvatar(
                                   minRadius: 50,
                                   maxRadius: 50,
-                                  backgroundImage:
-                                      NetworkImage(userData['photoUrl']),
+                                  backgroundImage: NetworkImage(
+                                    userData['photoUrl'],
+                                  ),
                                 ),
-                          SizedBox(height: 20),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.02),
                           Text(
                             userData['username'] ?? '',
                             style: GoogleFonts.workSans(
-                              fontSize: 20,
+                              fontSize: 20.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: 16),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.02),
                           Text(
                             userData['bio'] != ""
                                 ? userData['bio']
                                 : 'Add bio in your profile',
                             style: GoogleFonts.workSans(
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
                           SizedBox(
-                            height: 20,
+                            height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -248,7 +254,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Text(
                                     following.toString(),
                                     style: GoogleFonts.workSans(
-                                      fontSize: 16,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -258,7 +264,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Text(
                                     'Following',
                                     style: GoogleFonts.workSans(
-                                      fontSize: 12,
+                                      fontSize: 12.sp,
                                     ),
                                   ),
                                 ],
@@ -268,7 +274,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Text(
                                     followers.toString(),
                                     style: GoogleFonts.workSans(
-                                      fontSize: 16,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -278,7 +284,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Text(
                                     'Followers',
                                     style: GoogleFonts.workSans(
-                                      fontSize: 12,
+                                      fontSize: 12.sp,
                                     ),
                                   ),
                                 ],
@@ -357,8 +363,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       : Button(
                                           fontsize: 12,
                                           label: 'Unfollow',
-                                          color: Colors.grey[300],
-                                          textcolor: primaryColor,
+                                          color: Colors.red[100],
+                                          textcolor: Colors.red,
                                           width: 150,
                                           height: 40,
                                           function: () async {

@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/models/user.dart' as model;
 import 'package:nidful/providers/user_provider.dart';
@@ -33,26 +34,27 @@ class _ItemListState extends State<ItemList> {
       child: Column(
         children: [
           Container(
-            width: double.maxFinite,
-            height: 200,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.2,
             child: Row(
               children: [
                 Container(
-                  width: 110,
-                  height: 110,
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  height: MediaQuery.of(context).size.height * 0.2,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(widget.snap['postUrl']),
+                    child: Image.network(widget.snap['postUrl'],
+                        fit: BoxFit.cover),
                   ),
                 ),
-                SizedBox(width: 18),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       widget.snap['title'],
-                      style: TextStyle(color: primaryColor),
+                      style: TextStyle(color: primaryColor, fontSize: 20.sp),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -65,14 +67,14 @@ class _ItemListState extends State<ItemList> {
                         maxLines: 1,
                         softWrap: false,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           color: Colors.grey,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
                     Container(
-                      width: 100,
+                      width: MediaQuery.of(context).size.width * 0.25,
                       height: 30,
                       decoration: BoxDecoration(
                           color: Colors.grey[200],
@@ -89,6 +91,7 @@ class _ItemListState extends State<ItemList> {
               ],
             ),
           ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
           Button(
             label: 'Get Item',
             load: isLoading
@@ -101,8 +104,8 @@ class _ItemListState extends State<ItemList> {
                     'Get Item',
                     style: TextStyle(color: Colors.white),
                   ),
-            width: 400,
-            height: 57,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.07,
             function: () async {
               setState(() {
                 isLoading = true;

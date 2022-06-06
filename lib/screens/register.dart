@@ -69,8 +69,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 overflow: Overflow.visible,
                 children: [
                   Positioned(
-                    top: -65,
-                    right: 0,
+                    top: MediaQuery.of(context).size.height * 0.001 * -5,
+                    right: MediaQuery.of(context).size.width / 1000 * -40,
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.45,
@@ -85,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 1 / 60),
+            SizedBox(height: MediaQuery.of(context).size.height * 1 / 20),
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),

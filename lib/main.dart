@@ -26,7 +26,10 @@ void main() async {
   ));
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
-    MyApp(),
+    DevicePreview(
+      enabled: true,
+      builder: (context) => MyApp(), // Wrap your app
+    ),
   );
 }
 
@@ -47,6 +50,9 @@ class MyApp extends StatelessWidget {
             ),
           ],
           child: GetMaterialApp(
+            useInheritedMediaQuery: true,
+            locale: DevicePreview.locale(context),
+            builder: DevicePreview.appBuilder,
             debugShowCheckedModeBanner: false,
             title: 'Nidful',
             home: StreamBuilder(
