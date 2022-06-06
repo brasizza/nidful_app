@@ -177,13 +177,26 @@ class FireStoreMethods {
             'date': DateTime.now(),
           });
 
-          await _firestore.collection('Vetnotifications').doc(postId).set({
+          await _firestore
+              .collection('Vetnotifications')
+              .doc(uid)
+              .collection('notify')
+              .add({
             'sender': requester,
             'receiver': uid,
             'username': username,
             'postId': postId,
             'date': DateTime.now(),
             'type': 'requesting'
+          }).then((value) {
+            FirebaseFirestore.instance
+                .collection('Vetnotifications')
+                .doc(uid)
+                .set({
+              "last_requester": requester,
+              'time': FieldValue.serverTimestamp(),
+              'read': false,
+            });
           });
           res = 'success';
         }

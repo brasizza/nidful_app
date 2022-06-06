@@ -49,6 +49,8 @@ class _NotificationPageState extends State<NotificationPage> {
                   FutureBuilder(
                     future: FirebaseFirestore.instance
                         .collection('Vetnotifications')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .collection('notify')
                         .where(
                           'receiver',
                           isEqualTo: FirebaseAuth.instance.currentUser!.uid,

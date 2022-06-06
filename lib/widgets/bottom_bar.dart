@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,15 +20,29 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
+  var notify = {};
   @override
   void initState() {
     super.initState();
     addData();
+    getNotification();
   }
 
   addData() async {
     UserProvider _userProvider = Provider.of(context, listen: false);
     await _userProvider.refreshUser();
+  }
+
+  getNotification() async {
+    var data = await FirebaseFirestore.instance
+        .collection('Vetnotifications')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    // print(data.data());
+    // return data.data();
+    setState(() {
+      notify = data.data()!;
+    });
   }
 
   var index = 0;
@@ -82,17 +97,41 @@ class _BottomBarState extends State<BottomBar> {
                 ),
                 label: ''),
             BottomNavigationBarItem(
-                icon: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: index == 2 ? primaryColor : Colors.transparent,
-                  ),
-                  child: SvgPicture.asset(
-                    'assets/NOTIFICATION.svg',
-                    semanticsLabel: 'NOTIFICATION',
-                    color: index == 2 ? Colors.white : primaryColor,
-                  ),
+                icon: Stack(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: index == 2 ? primaryColor : Colors.transparent,
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/NOTIFICATION.svg',
+                        semanticsLabel: 'NOTIFICATION',
+                        color: index == 2 ? Colors.white : primaryColor,
+                      ),
+                    ),
+                    notify['last_requester'] != ''
+                        ? Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.red,
+                              ),
+                              child: Text(
+                                '1',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                  ],
                 ),
                 label: ''),
             BottomNavigationBarItem(
