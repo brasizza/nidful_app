@@ -321,11 +321,11 @@ class _PostProductState extends State<PostProduct> {
                             dropdownItem.add(
                               DropdownMenuItem(
                                 child: Text(
-                                  snap.id,
+                                  snap['cat_name'],
                                   style: GoogleFonts.workSans(),
                                 ),
                                 // get cat name as value
-                                value: snap.id,
+                                value: snap['cat_name'],
                               ),
                             );
                           }
