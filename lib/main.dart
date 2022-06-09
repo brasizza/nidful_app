@@ -10,6 +10,7 @@ import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/login.dart';
 import 'package:flutter/services.dart';
 import 'package:nidful/screens/on_board.dart';
+import 'package:nidful/screens/verify_email.dart';
 import 'package:nidful/service/not.dart';
 import 'package:nidful/widgets/bottom_bar.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,7 @@ class MyApp extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active) {
                   if (snapshot.hasData) {
-                    return BottomBar();
+                    return VerifyEmail();
                   } else if (snapshot.hasError) {
                     return Center(
                       child: Text('${snapshot.error}'),

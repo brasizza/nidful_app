@@ -116,6 +116,7 @@ class _ItemListState extends State<ItemList> {
                 requester: FirebaseAuth.instance.currentUser!.uid,
                 username: user.username,
                 photoUrl: user.photoUrl,
+                title: widget.snap['title'],
               );
               if (res != 'success') {
                 showSnackBar(res, context);

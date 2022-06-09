@@ -16,6 +16,31 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
+  var notifications = [];
+  @override
+  initState() {
+    super.initState();
+    getNotifications();
+  }
+
+  getNotifications() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('userNotifications')
+        // .orderBy('timestamp', descending: true)
+        .limit(50)
+        .get();
+    snapshot.docs.forEach((doc) {
+      print('${doc.data()}');
+    });
+
+    setState(() {
+      notifications = snapshot.docs;
+    });
+    // print(snapshot.docs);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,13 +73,11 @@ class _NotificationPageState extends State<NotificationPage> {
                 children: [
                   FutureBuilder(
                     future: FirebaseFirestore.instance
-                        .collection('Vetnotifications')
+                        .collection('notifications')
                         .doc(FirebaseAuth.instance.currentUser!.uid)
-                        .collection('notify')
-                        .where(
-                          'receiver',
-                          isEqualTo: FirebaseAuth.instance.currentUser!.uid,
-                        )
+                        .collection('userNotifications')
+                        .orderBy('timestamp', descending: true)
+                        .limit(50)
                         .get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -69,36 +92,6 @@ class _NotificationPageState extends State<NotificationPage> {
                         itemCount: (snapshot.data! as dynamic).docs.length,
                         itemBuilder: (BuildContext context, int index) {
                           return NotificationsList(
-                            snap:
-                                (snapshot.data! as dynamic).docs[index].data(),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  FutureBuilder(
-                    future: FirebaseFirestore.instance
-                        .collection('vetsPing')
-                        .where(
-                          'requester',
-                          isEqualTo: FirebaseAuth.instance.currentUser!.uid,
-                        )
-                        .where(
-                          'status',
-                          isEqualTo: 'accepted',
-                        )
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container();
-                      }
-                      return ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        physics: ScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: (snapshot.data! as dynamic).docs.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return AcceptedList(
                             snap:
                                 (snapshot.data! as dynamic).docs[index].data(),
                           );

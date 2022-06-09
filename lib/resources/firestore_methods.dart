@@ -55,20 +55,71 @@ class FireStoreMethods {
     return res;
   }
 
-  Future<void> likeProduct(String postId, String uid, List likes) async {
+  Future<void> likeProduct(String postId, String uid, String ownerId,
+      List likes, String username, String photoUrl, String postUrl) async {
     try {
       if (likes.contains(uid)) {
         await _firestore.collection('products').doc(postId).update({
           'likes': FieldValue.arrayRemove([uid])
         });
+        bool isNotPostOwner = uid != ownerId;
+        if (isNotPostOwner) {
+          removeNotificationLike(ownerId, postId);
+        }
       } else {
         await _firestore.collection('products').doc(postId).update({
           'likes': FieldValue.arrayUnion([uid])
         });
+        bool isNotPostOwner = uid != ownerId;
+        if (isNotPostOwner) {
+          addNotificationLike(
+              uid, ownerId, username, postId, photoUrl, postUrl);
+        }
       }
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  addNotificationLike(
+    String uid,
+    String ownerId,
+    String username,
+    String postId,
+    String photoUrl,
+    String postUrl,
+  ) {
+    FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(ownerId)
+        .collection('userNotifications')
+        .doc(postId)
+        .set({
+      'type': 'like',
+      'postId': postId,
+      'timestamp': DateTime.now().toString(),
+      'read': false,
+      'username': username,
+      'userImg': photoUrl,
+      'postUrl': postUrl,
+    });
+  }
+
+  removeNotificationLike(
+    String ownerId,
+    String postId,
+  ) {
+    FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(ownerId)
+        .collection('userNotifications')
+        .doc(postId)
+        .get()
+        .then((value) {
+      if (value.exists) {
+        value.reference.delete();
+      }
+    });
   }
 
   Future<void> followUser(String uid, String followId) async {
@@ -154,6 +205,7 @@ class FireStoreMethods {
     required String requester,
     required String username,
     required String photoUrl,
+    required String title,
   }) async {
     String res = 'Some error occured';
     String rand = const Uuid().v1();
@@ -167,7 +219,7 @@ class FireStoreMethods {
         if (FirebaseAuth.instance.currentUser!.uid == uid) {
           res = 'You cant make request on your product';
         } else {
-          await _firestore.collection('vets').doc(rand).set({
+          await _firestore.collection('vets').doc(postId).set({
             'requester': requester,
             'username': username,
             'uid': uid,
@@ -178,25 +230,18 @@ class FireStoreMethods {
           });
 
           await _firestore
-              .collection('Vetnotifications')
+              .collection('notifications')
               .doc(uid)
-              .collection('notify')
+              .collection('userNotifications')
               .add({
             'sender': requester,
             'receiver': uid,
             'username': username,
             'postId': postId,
-            'date': DateTime.now(),
-            'type': 'requesting'
-          }).then((value) {
-            FirebaseFirestore.instance
-                .collection('Vetnotifications')
-                .doc(uid)
-                .set({
-              "last_requester": requester,
-              'time': FieldValue.serverTimestamp(),
-              'read': false,
-            });
+            'title': title,
+            'timestamp': DateTime.now().toString(),
+            'type': 'requesting',
+            'read': 'false',
           });
           res = 'success';
         }
@@ -241,6 +286,21 @@ class FireStoreMethods {
         'giver': giver,
         'date': DateTime.now(),
         'status': 'accepted',
+      });
+
+      await _firestore
+          .collection('notifications')
+          .doc(requester)
+          .collection('userNotifications')
+          .add({
+        'sender': uid,
+        'receiver': requester,
+        'username': username,
+        'giver': giver,
+        'postId': postId,
+        'timestamp': DateTime.now().toString(),
+        'type': 'accepted',
+        'read': 'false',
       });
 
       res = 'success';

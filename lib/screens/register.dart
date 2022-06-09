@@ -8,6 +8,7 @@ import 'package:nidful/constant/constants.dart';
 import 'package:nidful/resources/auth_methods.dart';
 import 'package:nidful/screens/home.dart';
 import 'package:nidful/screens/login.dart';
+import 'package:nidful/screens/verify_email.dart';
 import 'package:nidful/utils/utils.dart';
 import 'package:nidful/widgets/bottom_bar.dart';
 import 'package:nidful/widgets/color_button.dart';
@@ -51,7 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (res != 'success') {
       showSnackBar(res, context);
     } else {
-      Get.offAll(() => BottomBar());
+      Get.offAll(() => VerifyEmail());
     }
   }
 

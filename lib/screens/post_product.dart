@@ -31,6 +31,8 @@ class _PostProductState extends State<PostProduct> {
   // Initial Selected Value
   String dropdownvalue = 'Please Select Category';
 
+  var selectedItem;
+
   // List of items in our dropdown menu
   var items = [
     'Please Select Category',
@@ -269,39 +271,92 @@ class _PostProductState extends State<PostProduct> {
                       SizedBox(
                         height: 11,
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.08,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: primaryColor),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: DropdownButton(
-                          isExpanded: true,
-                          // Initial Value
-                          value: dropdownvalue,
-                          underline: SizedBox(),
+                      // Container(
+                      //   padding: EdgeInsets.symmetric(horizontal: 15),
+                      //   width: MediaQuery.of(context).size.width,
+                      //   height: MediaQuery.of(context).size.height * 0.08,
+                      //   decoration: BoxDecoration(
+                      //     border: Border.all(color: primaryColor),
+                      //     borderRadius: BorderRadius.circular(5),
+                      //   ),
+                      //   child: DropdownButton(
+                      //     isExpanded: true,
+                      //     // Initial Value
+                      //     value: dropdownvalue,
+                      //     underline: SizedBox(),
 
-                          // Down Arrow Icon
-                          icon: const Icon(Icons.keyboard_arrow_down),
+                      //     // Down Arrow Icon
+                      //     icon: const Icon(Icons.keyboard_arrow_down),
 
-                          // Array list of items
-                          items: items.map((String items) {
-                            return DropdownMenuItem(
-                              value: items,
-                              child: Text(items),
+                      //     // Array list of items
+                      //     items: items.map((String items) {
+                      //       return DropdownMenuItem(
+                      //         value: items,
+                      //         child: Text(items),
+                      //       );
+                      //     }).toList(),
+                      //     // After selecting the desired option,it will
+                      //     // change button value to selected value
+                      //     onChanged: (String? newValue) {
+                      //       setState(() {
+                      //         dropdownvalue = newValue!;
+                      //       });
+                      //     },
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 20.0,
+                      // ),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("categories")
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          // if (snapshot.hasData) {
+                          //   const Text("Loading.....");
+                          // } else {
+                          List<DropdownMenuItem> dropdownItem = [];
+                          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                            DocumentSnapshot snap = snapshot.data!.docs[i];
+                            dropdownItem.add(
+                              DropdownMenuItem(
+                                child: Text(
+                                  snap.id,
+                                  style: GoogleFonts.workSans(),
+                                ),
+                                // get cat name as value
+                                value: snap.id,
+                              ),
                             );
-                          }).toList(),
-                          // After selecting the desired option,it will
-                          // change button value to selected value
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownvalue = newValue!;
-                            });
-                          },
-                        ),
+                          }
+                          return Container(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.08,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: primaryColor),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: DropdownButton<dynamic>(
+                              isExpanded: true,
+                              underline: SizedBox(),
+                              items: dropdownItem,
+                              onChanged: (currencyValue) {
+                                setState(() {
+                                  selectedItem = currencyValue;
+                                });
+                              },
+                              value: selectedItem,
+                              hint: Text(
+                                "Choose Category",
+                                style: GoogleFonts.workSans(),
+                              ),
+                            ),
+                          );
+                          // }
+                        },
                       ),
+
                       SizedBox(
                         height: 20,
                       ),
@@ -323,6 +378,7 @@ class _PostProductState extends State<PostProduct> {
                         controller: _descriptionController,
                         label: 'Item Description',
                         height: 150,
+                        maxLine: 5,
                       ),
                       SizedBox(
                         height: 20,

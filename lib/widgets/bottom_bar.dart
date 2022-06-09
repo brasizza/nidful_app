@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,8 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-  var notify = {};
+  Timer? timer;
+  var notify;
   @override
   void initState() {
     super.initState();
@@ -35,13 +38,16 @@ class _BottomBarState extends State<BottomBar> {
 
   getNotification() async {
     var data = await FirebaseFirestore.instance
-        .collection('Vetnotifications')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('notifications')
+        // .doc(FirebaseAuth.instance.currentUser!.uid)
+        .where('receiver', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where('read', isEqualTo: 'false')
         .get();
+    // print(data.docs.length);
     // print(data.data());
     // return data.data();
     setState(() {
-      notify = data.data()!;
+      notify = data.docs.length;
     });
   }
 
@@ -111,7 +117,7 @@ class _BottomBarState extends State<BottomBar> {
                         color: index == 2 ? Colors.white : primaryColor,
                       ),
                     ),
-                    notify['last_requester'] != ''
+                    notify != ''
                         ? Positioned(
                             right: 0,
                             top: 0,
@@ -122,7 +128,7 @@ class _BottomBarState extends State<BottomBar> {
                                 color: Colors.red,
                               ),
                               child: Text(
-                                '1',
+                                notify.toString(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,

@@ -39,6 +39,7 @@ dependencies:
   firebase_storage: ^10.2.16
   flutter:
     sdk: flutter
+  flutter_image_compress: ^1.1.0
   flutter_local_notifications: ^9.5.3+1
   flutter_screenutil: ^5.5.2
   flutter_slidable: ^1.2.1
@@ -48,6 +49,7 @@ dependencies:
   get: ^4.6.1
   google_fonts: ^2.3.2
   http: ^0.13.4
+  image_cropper: ^2.0.3
   image_picker: ^0.8.5+3
   intl: ^0.17.0
   liquid_swipe: ^2.1.1

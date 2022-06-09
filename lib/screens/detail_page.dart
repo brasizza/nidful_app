@@ -188,9 +188,14 @@ class _DetailPageState extends State<DetailPage> {
                                     GestureDetector(
                                       onTap: () async {
                                         await FireStoreMethods().likeProduct(
-                                            widget.snap['postId'],
-                                            widget.snap['uid'],
-                                            widget.snap['likes']);
+                                          widget.snap['postId'],
+                                          user.uid,
+                                          widget.snap['uid'],
+                                          widget.snap['likes'],
+                                          user.username,
+                                          user.photoUrl,
+                                          widget.snap['postUrl'],
+                                        );
                                         // setState(() {
                                         //   widget.snap['likes'] = int.parse(
                                         //           widget.snap['likes'].length) +
@@ -285,11 +290,16 @@ class _DetailPageState extends State<DetailPage> {
                                           String res = await FireStoreMethods()
                                               .itemPingAccept(
                                             postId: widget.snap['postId'],
-                                            uid: widget.snap['uid'],
-                                            requester: FirebaseAuth
-                                                .instance.currentUser!.uid,
-                                            username: user.username,
-                                            giver: widget.snap['username'],
+                                            uid: user.uid,
+                                            requester:
+                                                (snapshot.data! as dynamic)
+                                                    .docs[index]
+                                                    .data()['requester'],
+                                            username:
+                                                (snapshot.data! as dynamic)
+                                                    .docs[index]
+                                                    .data()['username'],
+                                            giver: user.username,
                                           );
                                           setState(() {
                                             isLoading = false;

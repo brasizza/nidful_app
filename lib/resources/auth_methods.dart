@@ -28,7 +28,7 @@ class AuthMethod {
       if (email.isNotEmpty || password.isNotEmpty || username.isNotEmpty) {
         UserCredential cred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        print(cred.user!.uid);
+        // print(cred.user!.uid);
 
         // save user data to db
 

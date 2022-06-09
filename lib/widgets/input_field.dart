@@ -10,6 +10,7 @@ class InputWidget extends StatefulWidget {
   final double? height;
   final bool isObscure;
   final double? fsize;
+  final int? maxLine;
   final TextEditingController? controller;
 
   const InputWidget(
@@ -19,7 +20,7 @@ class InputWidget extends StatefulWidget {
       this.isObscure = false,
       this.height,
       this.controller,
-      this.fsize})
+      this.fsize, this.maxLine})
       : super(key: key);
 
   @override
@@ -46,6 +47,7 @@ class _InputWidgetState extends State<InputWidget> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: TextField(
+            maxLines: widget.maxLine ?? 1,
             controller: widget.controller,
             decoration: InputDecoration(
               border: InputBorder.none,

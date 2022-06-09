@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -58,7 +59,7 @@ class _NotificationsListState extends State<NotificationsList> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (widget.snap['type'] == 'requesting')
+                if (widget.snap['type'] == 'like')
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -68,7 +69,7 @@ class _NotificationsListState extends State<NotificationsList> {
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Text(
-                        "${widget.snap['username']} requesting for a product",
+                        "${widget.snap['username']} liked your post",
                         style: GoogleFonts.workSans(fontSize: 10),
                       ),
                       SizedBox(
@@ -130,6 +131,21 @@ class _NotificationsListState extends State<NotificationsList> {
                       // ),
                     ],
                   )
+                else if (widget.snap['type'] == 'requesting')
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Bossss 🌟',
+                        style: GoogleFonts.workSans(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      Text(
+                        '${widget.snap['username']} requesting for ${widget.snap['title']}',
+                        style: GoogleFonts.workSans(fontSize: 10),
+                      ),
+                    ],
+                  )
                 else if (widget.snap['type'] == 'accepted')
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,22 +156,7 @@ class _NotificationsListState extends State<NotificationsList> {
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Text(
-                        '${widget.snap['username']} wants to gift you macbook',
-                        style: GoogleFonts.workSans(fontSize: 10),
-                      ),
-                    ],
-                  )
-                else
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Comrade 🌟',
-                        style: GoogleFonts.workSans(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Text(
-                        'John wants to gift you macbook',
+                        '${widget.snap['giver']} accepted your request \n send a message',
                         style: GoogleFonts.workSans(fontSize: 10),
                       ),
                     ],
@@ -164,13 +165,87 @@ class _NotificationsListState extends State<NotificationsList> {
             ),
           ]),
         ),
-        InkWell(
+        if (widget.snap['type'] == 'like')
+          InkWell(
             onTap: () {
-              Get.to(DetailPage(
-                snap: data,
-              ));
+              Get.to(
+                () => DetailPage(
+                  snap: data,
+                ),
+              );
             },
-            child: Icon(Icons.arrow_forward_outlined)),
+            child: Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+            ),
+          )
+        else if (widget.snap['type'] == 'requesting')
+          InkWell(
+            onTap: () {
+              Get.to(
+                () => DetailPage(
+                  snap: data,
+                ),
+              );
+            },
+            child: Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+            ),
+          )
+        else
+          InkWell(
+            onTap: () {
+              Get.to(
+                () => ProfilePage(
+                  uid: widget.snap['sender'],
+                ),
+              );
+            },
+            child: Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+            ),
+          )
+
+        // InkWell(
+        // onTap: () async {
+        //   await FireStoreMethods().itemPingAccept(
+        //     uid: user.uid,
+        //     postId: widget.snap['postId'],
+        //     username: widget.snap['username'],
+        //     requester: widget.snap['sender'],
+        //     giver: user.username,
+        //   );
+
+        //   await FirebaseFirestore.instance
+        //       .collection('Vetnotifications')
+        //       .where('receiver',
+        //           isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        //       .where('postId', isEqualTo: widget.snap['postId'])
+        //       .get()
+        //       .then((value) {
+        //     value.docs.forEach((element) {
+        //       FirebaseFirestore.instance
+        //           .collection('Vetnotifications')
+        //           .doc(element.id)
+        //           .update({
+        //         'when': 'seen',
+        //       }).then((value) {
+        //         FirebaseFirestore.instance
+        //             .collection('vets')
+        //             .doc(element.id)
+        //             .update({
+        //           'status': 'accepted',
+        //         });
+        //       });
+        //     });
+        //   });
+        //   Get.to(() => DetailPage(
+        //         snap: data,
+        //       ));
+        // },
+        // child: Icon(Icons.arrow_forward_outlined)),
       ],
     );
   }

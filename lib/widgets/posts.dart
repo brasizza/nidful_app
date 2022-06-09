@@ -89,7 +89,14 @@ class _PostsState extends State<Posts> {
             },
             onDoubleTap: () async {
               await FireStoreMethods().likeProduct(
-                  widget.snap['postId'], user.uid, widget.snap['likes']);
+                widget.snap['postId'],
+                user.uid,
+                widget.snap['uid'],
+                widget.snap['likes'],
+                user.username,
+                user.photoUrl,
+                widget.snap['postUrl'],
+              );
               setState(() {
                 isLikeAnimating = true;
               });
@@ -243,9 +250,14 @@ class _PostsState extends State<Posts> {
                               child: InkWell(
                                 onTap: () async {
                                   await FireStoreMethods().likeProduct(
-                                      widget.snap['postId'],
-                                      user.uid,
-                                      widget.snap['likes']);
+                                    widget.snap['postId'],
+                                    user.uid,
+                                    widget.snap['uid'],
+                                    widget.snap['likes'],
+                                    user.username,
+                                    user.photoUrl,
+                                    widget.snap['postUrl'],
+                                  );
                                 },
                                 child: SvgPicture.asset(
                                   'assets/LIKE.svg',
@@ -259,7 +271,7 @@ class _PostsState extends State<Posts> {
                             ),
                             Text(
                               widget.snap['likes'].length.toString(),
-                              style: GoogleFonts.workSans(color: Colors.black),
+                              style: GoogleFonts.workSans(color: Colors.white),
                             ),
                           ],
                         ),
