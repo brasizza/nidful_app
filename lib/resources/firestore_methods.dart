@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:nidful/models/post.dart';
 import 'package:nidful/resources/storage_methods.dart';
 import 'package:nidful/utils/utils.dart';
@@ -266,44 +268,53 @@ class FireStoreMethods {
     try {
       String Vid = const Uuid().v1();
 
-      // var getData = await _firestore
-      //     .collection('vetsPing')
-      //     .where('requester', isEqualTo: requester)
-      //     .get();
-      // if() {
+      var getData = await _firestore
+          .collection('vetsPing')
+          .where('requester', isEqualTo: requester)
+          .get();
+      if (getData.docs.isNotEmpty) {
+        Get.snackbar(
+          'Info',
+          'Request sent has been sent to ${username} before',
+          backgroundColor: Colors.yellow[700],
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          borderRadius: 10,
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
+        );
+      } else {
+        await _firestore.collection('vets').doc(postId).update({
+          'status': 'accepted',
+        });
 
-      // }
+        await _firestore.collection('vetsPing').doc(Vid).set({
+          'postId': postId,
+          'uid': uid,
+          'requester': requester,
+          'username': username,
+          'giver': giver,
+          'date': DateTime.now(),
+          'status': 'accepted',
+        });
 
-      await _firestore.collection('vets').doc(postId).update({
-        'status': 'accepted',
-      });
+        await _firestore
+            .collection('notifications')
+            .doc(requester)
+            .collection('userNotifications')
+            .add({
+          'sender': uid,
+          'receiver': requester,
+          'username': username,
+          'giver': giver,
+          'postId': postId,
+          'timestamp': DateTime.now().toString(),
+          'type': 'accepted',
+          'read': 'false',
+        });
 
-      await _firestore.collection('vetsPing').doc(Vid).set({
-        'postId': postId,
-        'uid': uid,
-        'requester': requester,
-        'username': username,
-        'giver': giver,
-        'date': DateTime.now(),
-        'status': 'accepted',
-      });
-
-      await _firestore
-          .collection('notifications')
-          .doc(requester)
-          .collection('userNotifications')
-          .add({
-        'sender': uid,
-        'receiver': requester,
-        'username': username,
-        'giver': giver,
-        'postId': postId,
-        'timestamp': DateTime.now().toString(),
-        'type': 'accepted',
-        'read': 'false',
-      });
-
-      res = 'success';
+        res = 'success';
+      }
     } catch (e) {
       e.toString();
     }

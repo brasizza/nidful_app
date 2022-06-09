@@ -37,17 +37,18 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   getNotification() async {
-    var data = await FirebaseFirestore.instance
+    var data = FirebaseFirestore.instance
         .collection('notifications')
-        // .doc(FirebaseAuth.instance.currentUser!.uid)
-        .where('receiver', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .where('read', isEqualTo: 'false')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('userNotifications')
         .get();
     // print(data.docs.length);
     // print(data.data());
     // return data.data();
     setState(() {
-      notify = data.docs.length;
+      // get length of data
+      notify = (data as dynamic).docs.length;
+      // print((data as dynamic).docs.length);
     });
   }
 

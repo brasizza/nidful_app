@@ -211,7 +211,7 @@ class _EditprofileState extends State<Editprofile> {
                             setState(() {
                               isLoading = true;
                             });
-                            await FireStoreMethods().updateuser(
+                            var res = await FireStoreMethods().updateuser(
                               _firstnameController.text,
                               _lastnameController.text,
                               _usernameController.text,
@@ -219,7 +219,29 @@ class _EditprofileState extends State<Editprofile> {
                               _bioController.text,
                               _file,
                             );
-                            showSnackBar('Profile Updated', context);
+                            if (res != 'success') {
+                              Get.snackbar(
+                                'Error',
+                                res,
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                                snackPosition: SnackPosition.BOTTOM,
+                                borderRadius: 10,
+                                margin: EdgeInsets.all(10),
+                                padding: EdgeInsets.all(10),
+                              );
+                            } else {
+                              Get.snackbar(
+                                'Success',
+                                'Profile updated successfully',
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white,
+                                snackPosition: SnackPosition.BOTTOM,
+                                borderRadius: 10,
+                                margin: EdgeInsets.all(10),
+                                padding: EdgeInsets.all(10),
+                              );
+                            }
                             setState(() {
                               isLoading = false;
                             });

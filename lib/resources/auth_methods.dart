@@ -15,6 +15,21 @@ class AuthMethod {
     return model.User.fromSnap(snap);
   }
 
+  // validate username if exists
+
+  Future<bool> validateUsername(String username) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // sign up user
 
   Future<String> signUpUser({
@@ -26,31 +41,37 @@ class AuthMethod {
 
     try {
       if (email.isNotEmpty || password.isNotEmpty || username.isNotEmpty) {
-        UserCredential cred = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        // print(cred.user!.uid);
+        // validating username on users collection
+        bool isUsernameValid = await validateUsername(username);
+        if (isUsernameValid) {
+          res = 'Username already exists';
+        } else {
+          UserCredential cred = await _auth.createUserWithEmailAndPassword(
+              email: email, password: password);
+          // print(cred.user!.uid);
 
-        // save user data to db
+          // save user data to db
 
-        model.User user = model.User(
-          firstname: '',
-          lastname: '',
-          username: username,
-          uid: cred.user!.uid,
-          email: email,
-          bio: '',
-          photoUrl: '',
-          followers: [],
-          following: [],
-          token: '',
-        );
+          model.User user = model.User(
+            firstname: '',
+            lastname: '',
+            username: username,
+            uid: cred.user!.uid,
+            email: email,
+            bio: '',
+            photoUrl: '',
+            followers: [],
+            following: [],
+            token: '',
+          );
 
-        await _firestore
-            .collection('users')
-            .doc(cred.user!.uid)
-            .set(user.toJson());
+          await _firestore
+              .collection('users')
+              .doc(cred.user!.uid)
+              .set(user.toJson());
 
-        res = "success";
+          res = "success";
+        }
       } else {
         res = "Please enter all the fields";
       }

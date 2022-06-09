@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/models/user.dart' as model;
 import 'package:nidful/providers/user_provider.dart';
@@ -119,10 +120,29 @@ class _ItemListState extends State<ItemList> {
                 title: widget.snap['title'],
               );
               if (res != 'success') {
-                showSnackBar(res, context);
+                Get.snackbar(
+                  'Error',
+                  res,
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                  borderRadius: 10,
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
+                );
                 // print(res);
               } else {
-                showSnackBar('Request has been sent', context);
+                Get.snackbar(
+                  'Success',
+                  'Request has been sent',
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                  borderRadius: 10,
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
+                );
+                // showSnackBar('Request has been sent', context);
               }
               setState(() {
                 isLoading = false;

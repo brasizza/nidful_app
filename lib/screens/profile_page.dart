@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entry/entry.dart';
@@ -211,8 +212,21 @@ class _ProfilePageState extends State<ProfilePage> {
                               ? CircleAvatar(
                                   minRadius: 50,
                                   maxRadius: 50,
-                                  backgroundImage:
-                                      AssetImage('assets/profile_image.png'),
+                                  // generate random background color
+                                  backgroundColor: Colors.primaries[Random()
+                                      .nextInt(Colors.primaries.length)],
+                                  child: Center(
+                                    child: Text(
+                                      userData['username']
+                                          .toUpperCase()
+                                          .substring(0, 1),
+                                      style: GoogleFonts.workSans(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 30,
+                                      ),
+                                    ),
+                                  ),
                                 )
                               : CircleAvatar(
                                   minRadius: 50,

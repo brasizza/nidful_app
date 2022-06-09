@@ -50,7 +50,16 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     if (res != 'success') {
-      showSnackBar(res, context);
+      Get.snackbar(
+        'Error',
+        res,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 10,
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
+      );
     } else {
       Get.offAll(() => VerifyEmail());
     }

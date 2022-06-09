@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields
 
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -159,9 +161,22 @@ class _PostsState extends State<Posts> {
                         children: [
                           widget.snap['profImage'] == ''
                               ? CircleAvatar(
-                                  radius: 16,
-                                  backgroundImage: AssetImage(
-                                    'assets/user2.png',
+                                  // minRadius: 50,
+                                  // maxRadius: 50,
+                                  // generate random background color
+                                  backgroundColor: Colors.primaries[Random()
+                                      .nextInt(Colors.primaries.length)],
+                                  child: Center(
+                                    child: Text(
+                                      userData['username']
+                                          .toUpperCase()
+                                          .substring(0, 1),
+                                      style: GoogleFonts.workSans(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 30,
+                                      ),
+                                    ),
                                   ),
                                 )
                               : CircleAvatar(
@@ -193,6 +208,15 @@ class _PostsState extends State<Posts> {
                     ),
                     if (isFollowing)
                       FollowButton(
+                        function: () async {
+                          await FireStoreMethods().followUser(
+                            FirebaseAuth.instance.currentUser!.uid,
+                            widget.snap['uid'],
+                          );
+                          setState(() {
+                            isFollowing = false;
+                          });
+                        },
                         label: 'Following',
                         buttonColor: Colors.white,
                         textColor: primaryColor,
@@ -200,6 +224,15 @@ class _PostsState extends State<Posts> {
                     else if (widget.snap['uid'] !=
                         FirebaseAuth.instance.currentUser!.uid)
                       FollowButton(
+                        function: () async {
+                          await FireStoreMethods().followUser(
+                            FirebaseAuth.instance.currentUser!.uid,
+                            widget.snap['uid'],
+                          );
+                          setState(() {
+                            isFollowing = true;
+                          });
+                        },
                         label: 'Follow',
                         buttonColor: primaryColor,
                         textColor: Colors.white,

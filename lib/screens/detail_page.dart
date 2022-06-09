@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
 
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -105,8 +107,23 @@ class _DetailPageState extends State<DetailPage> {
                           },
                           child: widget.snap['profImage'] == ""
                               ? CircleAvatar(
-                                  backgroundImage:
-                                      Image.asset('assets/user.png').image,
+                                  // minRadius: 50,
+                                  // maxRadius: 50,
+                                  // generate random background color
+                                  backgroundColor: Colors.primaries[Random()
+                                      .nextInt(Colors.primaries.length)],
+                                  child: Center(
+                                    child: Text(
+                                      userData['username']
+                                          .toUpperCase()
+                                          .substring(0, 1),
+                                      style: GoogleFonts.workSans(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 30,
+                                      ),
+                                    ),
+                                  ),
                                 )
                               : CircleAvatar(
                                   backgroundImage:
@@ -305,19 +322,32 @@ class _DetailPageState extends State<DetailPage> {
                                             isLoading = false;
                                           });
                                           if (res != 'success') {
-                                            showSnackBar(res, context);
+                                            Get.snackbar(
+                                              'Success',
+                                              res,
+                                              backgroundColor: Colors.red,
+                                              colorText: Colors.white,
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
+                                              borderRadius: 10,
+                                              margin: EdgeInsets.all(10),
+                                              padding: EdgeInsets.all(10),
+                                            );
                                           } else {
                                             // showSnackBar(
                                             //     'Request has been sent',
                                             //     context);
-                                            Fluttertoast.showToast(
-                                                msg: 'Request has been sent',
-                                                toastLength: Toast.LENGTH_SHORT,
-                                                gravity: ToastGravity.BOTTOM,
-                                                timeInSecForIosWeb: 1,
-                                                backgroundColor: Colors.black,
-                                                textColor: Colors.white,
-                                                fontSize: 16.0);
+                                            Get.snackbar(
+                                              'Success',
+                                              'Request sent to ${(snapshot.data! as dynamic).docs[index].data()['username']}',
+                                              backgroundColor: Colors.green,
+                                              colorText: Colors.white,
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
+                                              borderRadius: 10,
+                                              margin: EdgeInsets.all(10),
+                                              padding: EdgeInsets.all(10),
+                                            );
                                           }
                                         }),
                                         backgroundColor: Colors.greenAccent,
@@ -374,14 +404,41 @@ class _DetailPageState extends State<DetailPage> {
                                               );
                                             },
                                             child: CircleAvatar(
-                                              backgroundImage: AssetImage(
-                                                  'assets/user2.png'),
+                                              // minRadius: 50,
+                                              // maxRadius: 50,
+                                              // generate random background color
+                                              backgroundColor: Colors.primaries[
+                                                  Random().nextInt(
+                                                      Colors.primaries.length)],
+                                              child: Center(
+                                                child: Text(
+                                                  userData['username']
+                                                      .toUpperCase()
+                                                      .substring(0, 1),
+                                                  style: GoogleFonts.workSans(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 30,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           )
-                                        : CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                (snapshot.data! as dynamic)
-                                                    .docs[index]['photoUrl']),
+                                        : InkWell(
+                                            onTap: () {
+                                              Get.to(
+                                                () => ProfilePage(
+                                                    uid: (snapshot.data!
+                                                                as dynamic)
+                                                            .docs[index]
+                                                        ['requester']),
+                                              );
+                                            },
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  (snapshot.data! as dynamic)
+                                                      .docs[index]['photoUrl']),
+                                            ),
                                           ),
                                     SizedBox(
                                         width:

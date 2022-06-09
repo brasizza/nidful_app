@@ -60,9 +60,29 @@ class _PostProductState extends State<PostProduct> {
       _isLoading = true;
     });
     try {
+      if (_titleController.text.isEmpty ||
+          _categoryController.text.isEmpty ||
+          _conditionController.text.isEmpty ||
+          _quantityController.text.isEmpty ||
+          _descriptionController.text.isEmpty ||
+          _file == null) {
+        Get.snackbar(
+          'Error',
+          'Please fill all the fields',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          borderRadius: 10,
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+      }
       String res = await FireStoreMethods().uploadPost(
         _titleController.text,
-        _categoryController.text,
+        selectedItem,
         _conditionController.text,
         _quantityController.text,
         _descriptionController.text,
@@ -72,7 +92,17 @@ class _PostProductState extends State<PostProduct> {
         profImage,
       );
       if (res == 'success') {
-        _showanimation(context, 'assets/done.json');
+        // _showanimation(context, 'assets/done.json');
+        Get.snackbar(
+          'Success',
+          'Product Posted Successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          borderRadius: 10,
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
+        );
         setState(() {
           _isLoading = false;
         });
@@ -83,14 +113,37 @@ class _PostProductState extends State<PostProduct> {
         _quantityController.text = '';
         _descriptionController.text = '';
         _file == null;
+        Get.off(() => ExplorePage());
       } else {
         setState(() {
           _isLoading = false;
         });
-        showSnackBar(res, context);
+        Get.snackbar(
+          'Error',
+          res,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          borderRadius: 10,
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
+        );
       }
     } catch (e) {
-      showSnackBar(e.toString(), context);
+      print(e.toString());
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 10,
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
+      );
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -160,7 +213,7 @@ class _PostProductState extends State<PostProduct> {
             ),
             SimpleDialogOption(
               padding: EdgeInsets.all(20),
-              child: Text('Ok'),
+              child: Center(child: Text('Ok')),
               onPressed: () async {
                 Navigator.of(context).pop();
                 Get.back();
@@ -315,6 +368,12 @@ class _PostProductState extends State<PostProduct> {
                           // if (snapshot.hasData) {
                           //   const Text("Loading.....");
                           // } else {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: LinearProgressIndicator(),
+                            );
+                          }
                           List<DropdownMenuItem> dropdownItem = [];
                           for (int i = 0; i < snapshot.data!.docs.length; i++) {
                             DocumentSnapshot snap = snapshot.data!.docs[i];

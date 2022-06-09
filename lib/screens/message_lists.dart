@@ -70,12 +70,23 @@ class MessageList extends StatelessWidget {
                     if (asyncSnapshot.hasData) {
                       var friend = asyncSnapshot.data;
                       return ListTile(
-                        leading: CircleAvatar(
-                          child: Image.network(
-                            friend['photoUrl'],
-                            // fit: BoxFit.cover,
-                          ),
-                        ),
+                        leading: friend['photoUrl'] != ''
+                            ? CircleAvatar(
+                                child: Image.network(
+                                  friend['photoUrl'],
+                                  // fit: BoxFit.cover,
+                                ),
+                              )
+                            : CircleAvatar(
+                                child: Text(
+                                  friend['email'].substring(0, 1),
+                                  style: GoogleFonts.workSans(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
                         title: Text(friend['username']),
                         subtitle: Container(
                           child: Text(

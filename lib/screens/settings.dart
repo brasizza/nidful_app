@@ -1,16 +1,32 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
+import 'dart:math';
+
+import 'package:flutter_switch/flutter_switch.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nidful/models/user.dart' as model;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/edit_profile.dart';
 import 'package:nidful/screens/security_page.dart';
+import 'package:provider/provider.dart';
 
-class Settingpage extends StatelessWidget {
+class Settingpage extends StatefulWidget {
   const Settingpage({Key? key}) : super(key: key);
 
   @override
+  State<Settingpage> createState() => _SettingpageState();
+}
+
+class _SettingpageState extends State<Settingpage> {
+  @override
   Widget build(BuildContext context) {
+    model.User user = Provider.of<UserProvider>(context).getUser;
+
+    bool status = false;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -54,11 +70,29 @@ class Settingpage extends StatelessWidget {
                   height: 20,
                 ),
                 Center(
-                  child: CircleAvatar(
-                    minRadius: 50,
-                    maxRadius: 50,
-                    backgroundImage: AssetImage('assets/profile_image.png'),
-                  ),
+                  child: user.photoUrl == ''
+                      ? CircleAvatar(
+                          minRadius: 50,
+                          maxRadius: 50,
+                          // generate random background color
+                          backgroundColor: Colors.primaries[
+                              Random().nextInt(Colors.primaries.length)],
+                          child: Center(
+                            child: Text(
+                              user.username.toUpperCase().substring(0, 1),
+                              style: GoogleFonts.workSans(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 30,
+                              ),
+                            ),
+                          ),
+                        )
+                      : CircleAvatar(
+                          minRadius: 50,
+                          maxRadius: 50,
+                          backgroundImage: NetworkImage(user.photoUrl),
+                        ),
                 ),
                 SizedBox(
                   height: 30,
@@ -96,14 +130,34 @@ class Settingpage extends StatelessWidget {
                       SizedBox(
                         height: 40,
                       ),
-                      Text(
-                        'Allow Chat',
-                        style: GoogleFonts.workSans(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Allow Chat',
+                              style: GoogleFonts.workSans(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            // Custom Switcher
+                            FlutterSwitch(
+                              width: 80.0,
+                              height: 35.0,
+                              valueFontSize: 20.0,
+                              toggleSize: 25.0,
+                              value: status,
+                              borderRadius: 30.0,
+                              padding: 8.0,
+                              showOnOff: true,
+                              onToggle: (val) {
+                                setState(() {
+                                  status = !val;
+                                });
+                              },
+                            ),
+                          ]),
                       SizedBox(
                         height: 40,
                       ),
@@ -134,12 +188,17 @@ class Settingpage extends StatelessWidget {
                       SizedBox(
                         height: 40,
                       ),
-                      Text(
-                        'Sign Out',
-                        style: GoogleFonts.workSans(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
+                      InkWell(
+                        onTap: () async {
+                          await FirebaseAuth.instance.signOut();
+                        },
+                        child: Text(
+                          'Sign Out',
+                          style: GoogleFonts.workSans(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
