@@ -167,7 +167,28 @@ class _NotificationsListState extends State<NotificationsList> {
         ),
         if (widget.snap['type'] == 'like')
           InkWell(
-            onTap: () {
+            onTap: () async {
+              // update read to true
+              await FirebaseFirestore.instance
+                  .collection('notifications')
+                  .doc(user.uid)
+                  .collection('userNotifications')
+                  .get()
+                  .then((value) => {
+                        value.docs.forEach((element) {
+                          if (element.data()['postId'] ==
+                              widget.snap['postId']) {
+                            FirebaseFirestore.instance
+                                .collection('notifications')
+                                .doc(user.uid)
+                                .collection('userNotifications')
+                                .doc(element.id)
+                                .update({
+                              'read': true,
+                            });
+                          }
+                        })
+                      });
               Get.to(
                 () => DetailPage(
                   snap: data,
@@ -181,7 +202,27 @@ class _NotificationsListState extends State<NotificationsList> {
           )
         else if (widget.snap['type'] == 'requesting')
           InkWell(
-            onTap: () {
+            onTap: () async {
+              await FirebaseFirestore.instance
+                  .collection('notifications')
+                  .doc(user.uid)
+                  .collection('userNotifications')
+                  .get()
+                  .then((value) => {
+                        value.docs.forEach((element) {
+                          if (element.data()['postId'] ==
+                              widget.snap['postId']) {
+                            FirebaseFirestore.instance
+                                .collection('notifications')
+                                .doc(user.uid)
+                                .collection('userNotifications')
+                                .doc(element.id)
+                                .update({
+                              'read': true,
+                            });
+                          }
+                        })
+                      });
               Get.to(
                 () => DetailPage(
                   snap: data,
@@ -195,7 +236,27 @@ class _NotificationsListState extends State<NotificationsList> {
           )
         else
           InkWell(
-            onTap: () {
+            onTap: () async {
+              await FirebaseFirestore.instance
+                  .collection('notifications')
+                  .doc(user.uid)
+                  .collection('userNotifications')
+                  .get()
+                  .then((value) => {
+                        value.docs.forEach((element) {
+                          if (element.data()['postId'] ==
+                              widget.snap['postId']) {
+                            FirebaseFirestore.instance
+                                .collection('notifications')
+                                .doc(user.uid)
+                                .collection('userNotifications')
+                                .doc(element.id)
+                                .update({
+                              'read': true,
+                            });
+                          }
+                        })
+                      });
               Get.to(
                 () => ProfilePage(
                   uid: widget.snap['sender'],

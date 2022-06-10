@@ -41,15 +41,18 @@ class _BottomBarState extends State<BottomBar> {
         .collection('notifications')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('userNotifications')
-        .get();
-    // print(data.docs.length);
-    // print(data.data());
-    // return data.data();
-    setState(() {
-      // get length of data
-      notify = (data as dynamic).docs.length;
-      // print((data as dynamic).docs.length);
+        .where('read', isEqualTo: false)
+        .snapshots();
+    data.listen((event) {
+      setState(() {
+        notify = event.docs.length;
+      });
     });
+    // setState(() {
+    //   // get length of data
+    //   notify = 3;
+    //   // print((data as dynamic).docs.length);
+    // });
   }
 
   var index = 0;
@@ -118,8 +121,9 @@ class _BottomBarState extends State<BottomBar> {
                         color: index == 2 ? Colors.white : primaryColor,
                       ),
                     ),
-                    notify != ''
-                        ? Positioned(
+                    notify == 0
+                        ? Text('')
+                        : Positioned(
                             right: 0,
                             top: 0,
                             child: Container(
@@ -137,7 +141,6 @@ class _BottomBarState extends State<BottomBar> {
                               ),
                             ),
                           )
-                        : Container(),
                   ],
                 ),
                 label: ''),

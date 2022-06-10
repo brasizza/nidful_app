@@ -14,14 +14,15 @@ class Page1 extends StatelessWidget {
       children: [
         Expanded(
           child: Stack(
+            alignment: Alignment.center,
             // fit: StackFit.expand,
             overflow: Overflow.visible,
             children: [
               Positioned(
                 top: MediaQuery.of(context).size.height * 0.001 * -1,
-                right: MediaQuery.of(context).size.width / 1000 * -40,
+                right: MediaQuery.of(context).size.width / 1000 * -0,
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery.of(context).size.width * 1.1,
                   height: MediaQuery.of(context).size.height * 0.45,
                   decoration: BoxDecoration(
                     image: DecorationImage(

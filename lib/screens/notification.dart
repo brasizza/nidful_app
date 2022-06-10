@@ -5,8 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nidful/constant/constants.dart';
 import 'package:nidful/widgets/accepted.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:nidful/widgets/notifications_list.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -32,7 +35,7 @@ class _NotificationPageState extends State<NotificationPage> {
         .limit(50)
         .get();
     snapshot.docs.forEach((doc) {
-      print('${doc.data()}');
+      // print('${doc.data()}');
     });
 
     setState(() {
@@ -81,8 +84,11 @@ class _NotificationPageState extends State<NotificationPage> {
                         .get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
+                        return Container(
+                          child: Center(
+                            child: LoadingAnimationWidget.inkDrop(
+                                color: primaryColor, size: 50),
+                          ),
                         );
                       }
                       return ListView.builder(
@@ -91,9 +97,15 @@ class _NotificationPageState extends State<NotificationPage> {
                         shrinkWrap: true,
                         itemCount: (snapshot.data! as dynamic).docs.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return NotificationsList(
-                            snap:
-                                (snapshot.data! as dynamic).docs[index].data(),
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              await getNotifications();
+                            },
+                            child: NotificationsList(
+                              snap: (snapshot.data! as dynamic)
+                                  .docs[index]
+                                  .data(),
+                            ),
                           );
                         },
                       );

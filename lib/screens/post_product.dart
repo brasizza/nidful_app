@@ -61,7 +61,6 @@ class _PostProductState extends State<PostProduct> {
     });
     try {
       if (_titleController.text.isEmpty ||
-          _categoryController.text.isEmpty ||
           _conditionController.text.isEmpty ||
           _quantityController.text.isEmpty ||
           _descriptionController.text.isEmpty ||
@@ -241,6 +240,7 @@ class _PostProductState extends State<PostProduct> {
     final model.User user = Provider.of<UserProvider>(context).getUser;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,

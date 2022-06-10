@@ -54,6 +54,7 @@ class _ChatPageState extends State<ChatPage> {
     model.User user = Provider.of<UserProvider>(context).getUser;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -112,7 +113,7 @@ class _ChatPageState extends State<ChatPage> {
                 itemCount: snapshot.data.docs.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 10, bottom: 10),
-                physics: ScrollPhysics(),
+                physics: AlwaysScrollableScrollPhysics(),
                 reverse: true,
                 itemBuilder: (context, index) {
                   bool isMe = snapshot.data.docs[index]['senderId'] == user.uid;
@@ -142,6 +143,10 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     Expanded(
                       child: TextField(
+                        // scroll padding
+                        // scrollPadding: EdgeInsets.symmetric(
+                        //     horizontal:
+                        //         MediaQuery.of(context).size.width * 0.2),
                         controller: _textEditingController,
                         decoration: InputDecoration(
                             hintText: "Write message...",

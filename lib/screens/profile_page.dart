@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/resources/firestore_methods.dart';
 import 'package:nidful/screens/chat_page.dart';
@@ -202,6 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               body: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
                 child: Column(children: [
                   Center(
                     child: Padding(
@@ -396,9 +398,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               SizedBox(
                                 width: 10,
                               ),
-                              showMsg &&
-                                      FirebaseAuth.instance.currentUser!.uid !=
-                                          widget.uid
+                              // showMsg &&
+                              FirebaseAuth.instance.currentUser!.uid !=
+                                      widget.uid
                                   ? Button(
                                       fontsize: 12,
                                       label: 'Message',
@@ -451,8 +453,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
+                                  return Container(
+                                    child: Center(
+                                      child: LoadingAnimationWidget.inkDrop(
+                                          color: primaryColor, size: 50),
+                                    ),
                                   );
                                 }
 
@@ -465,23 +470,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                         (snapshot.data! as dynamic).docs.length,
                                     shrinkWrap: true,
                                     crossAxisCount: 3,
-                                    crossAxisSpacing: 0,
+                                    crossAxisSpacing: 10,
                                     mainAxisSpacing: 16,
                                     itemBuilder: (context, index) {
                                       DocumentSnapshot snap =
                                           (snapshot.data! as dynamic)
                                               .docs[index];
-                                      return InkWell(
-                                        onTap: () => DetailPage(snap: snap),
+                                      return GestureDetector(
+                                        onTap: () {
+                                          DetailPage(snap: snap);
+                                        },
                                         child: Container(
-                                          width: 200,
-                                          height: 108,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.3,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.18,
                                           decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             image: DecorationImage(
                                               image: Image.network(
                                                 snap['postUrl'],
                                                 fit: BoxFit.cover,
                                               ).image,
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),

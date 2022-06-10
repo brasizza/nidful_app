@@ -71,10 +71,14 @@ class MessageList extends StatelessWidget {
                       var friend = asyncSnapshot.data;
                       return ListTile(
                         leading: friend['photoUrl'] != ''
-                            ? CircleAvatar(
-                                child: Image.network(
-                                  friend['photoUrl'],
-                                  // fit: BoxFit.cover,
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(30),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Image.network(
+                                    friend['photoUrl'],
+                                    // fit: BoxFit.fill,
+                                  ),
                                 ),
                               )
                             : CircleAvatar(

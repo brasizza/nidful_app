@@ -68,7 +68,13 @@ class _VerifyEmailState extends State<VerifyEmail> {
       setState(() => canResendEmail = true);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'too-many-requests') {
-        showSnackBar('Too many request from one device', context);
+        Get.snackbar(
+          'Error',
+          'Too many requests. Please try again later.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
       }
     } catch (e) {
       showSnackBar(e.toString(), context);
@@ -92,10 +98,10 @@ class _VerifyEmailState extends State<VerifyEmail> {
                       children: [
                         Positioned(
                           top: MediaQuery.of(context).size.height * 0.001 * -5,
-                          right: MediaQuery.of(context).size.width / 1000 * -40,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.45,
+                      right: MediaQuery.of(context).size.width / 1000 * -0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 1.1,
+                        height: MediaQuery.of(context).size.height * 0.45,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 fit: BoxFit.fill,
