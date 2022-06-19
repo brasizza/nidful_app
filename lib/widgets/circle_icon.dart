@@ -24,6 +24,7 @@ class CircleIcon extends StatelessWidget {
               icon,
               width: 20,
               height: 20,
+              color: Colors.white,
             )
           : Icon(
               icon,

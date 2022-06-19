@@ -13,26 +13,19 @@ class Page2 extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: Stack(
-            alignment: Alignment.center,
-            // fit: StackFit.expand,
-            overflow: Overflow.visible,
-            children: [
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.001 * -1,
-                right: MediaQuery.of(context).size.width / 1000 * -0,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 1.1,
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: AssetImage('assets/slide2.png'),
-                    ),
-                  ),
+          child: Positioned(
+            top: MediaQuery.of(context).size.height * 0.001 * -1,
+            right: MediaQuery.of(context).size.width / 1000 * -0,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 1.1,
+              height: MediaQuery.of(context).size.height * 0.45,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: AssetImage('assets/slide2.png'),
                 ),
               ),
-            ],
+            ),
           ),
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.1),

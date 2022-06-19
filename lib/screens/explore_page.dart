@@ -5,6 +5,7 @@ import 'package:entry/entry.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nidful/widgets/custom_page_controller.dart';
 import 'package:nidful/widgets/posts.dart';
 
 class ExplorePage extends StatefulWidget {
@@ -47,9 +48,15 @@ class _ExplorePageState extends State<ExplorePage> {
                 child: CircularProgressIndicator(),
               );
             }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('Error'),
+              );
+            }
 
             return PageView.builder(
               controller: widget._controller,
+              physics: CustomPageViewScrollPhysics(),
               scrollDirection: Axis.vertical,
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (BuildContext context, int index) {

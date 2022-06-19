@@ -17,6 +17,8 @@ import 'package:nidful/resources/firestore_methods.dart';
 import 'package:nidful/screens/chat_page.dart';
 import 'package:nidful/screens/detail_page.dart';
 import 'package:nidful/screens/edit_profile.dart';
+import 'package:nidful/screens/followers_list.dart';
+import 'package:nidful/screens/following_list.dart';
 import 'package:nidful/screens/post_product.dart';
 import 'package:nidful/screens/settings.dart';
 import 'package:nidful/utils/utils.dart';
@@ -33,6 +35,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   var userData = {};
+  var currentData = {};
   var check = {};
   int productLength = 0;
   int followers = 0;
@@ -47,6 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     getData();
     checkVet();
+    getCurrentUser();
   }
 
   sendNotification(String title, String token) async {
@@ -95,8 +99,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
       // get Product length
       var postSnap = await FirebaseFirestore.instance
-          .collection('products')
+          .collection('vetsPing')
           .where('uid', isEqualTo: widget.uid)
+          .where('status', isEqualTo: 'accepted')
           .get();
       productLength = postSnap.docs.length;
       userData = userSnap.data()!;
@@ -113,6 +118,21 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  getCurrentUser() async {
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      setState(() {
+        currentData = userSnap.data()!;
+        // print(currentData);
+      });
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
   }
 
   checkVet() async {
@@ -265,45 +285,59 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    following.toString(),
-                                    style: GoogleFonts.workSans(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
+                              InkWell(
+                                onTap: () => Get.to(
+                                  () => FollowingList(
+                                    uid: widget.uid,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      following.toString(),
+                                      style: GoogleFonts.workSans(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    'Following',
-                                    style: GoogleFonts.workSans(
-                                      fontSize: 12.sp,
+                                    SizedBox(
+                                      height: 8,
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      'Following',
+                                      style: GoogleFonts.workSans(
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Column(
-                                children: [
-                                  Text(
-                                    followers.toString(),
-                                    style: GoogleFonts.workSans(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
+                              InkWell(
+                                onTap: () => Get.to(
+                                  () => FollowerList(
+                                    uid: widget.uid,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      followers.toString(),
+                                      style: GoogleFonts.workSans(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    'Followers',
-                                    style: GoogleFonts.workSans(
-                                      fontSize: 12.sp,
+                                    SizedBox(
+                                      height: 8,
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      'Followers',
+                                      style: GoogleFonts.workSans(
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                               Column(
                                 children: [
@@ -368,7 +402,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               userData['uid'],
                                             );
                                             sendNotification(
-                                                'You have a new follower',
+                                                "${currentData['username']} Followed you",
                                                 userData['token']);
                                             setState(() {
                                               isFollowing = true;
@@ -379,8 +413,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       : Button(
                                           fontsize: 12,
                                           label: 'Unfollow',
-                                          color: Colors.red[100],
-                                          textcolor: Colors.red,
+                                          color: Colors.grey[300],
+                                          textcolor: primaryColor,
                                           width: 150,
                                           height: 40,
                                           function: () async {
@@ -478,7 +512,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                               .docs[index];
                                       return GestureDetector(
                                         onTap: () {
-                                          DetailPage(snap: snap);
+                                          Get.to(
+                                            () => DetailPage(
+                                              snap: snap,
+                                            ),
+                                          );
                                         },
                                         child: Container(
                                           width: MediaQuery.of(context)

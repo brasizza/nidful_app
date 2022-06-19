@@ -221,7 +221,7 @@ class FireStoreMethods {
         if (FirebaseAuth.instance.currentUser!.uid == uid) {
           res = 'You cant make request on your product';
         } else {
-          await _firestore.collection('vets').doc(postId).set({
+          await _firestore.collection('vets').doc(rand).set({
             'requester': requester,
             'username': username,
             'uid': uid,
@@ -284,9 +284,19 @@ class FireStoreMethods {
           padding: EdgeInsets.all(10),
         );
       } else {
-        await _firestore.collection('vets').doc(postId).update({
-          'status': 'accepted',
-        });
+        await _firestore
+            .collection('vets')
+            .where('postId', isEqualTo: postId)
+            .get()
+            .then((value) => {
+                  value.docs.forEach((element) {
+                    if (element.data()['uid'] == uid) {
+                      _firestore.collection('vets').doc(element.id).update({
+                        'status': 'accepted',
+                      });
+                    }
+                  })
+                });
 
         await _firestore.collection('vetsPing').doc(Vid).set({
           'postId': postId,

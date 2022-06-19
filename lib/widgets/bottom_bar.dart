@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nidful/constant/constants.dart';
 import 'package:nidful/providers/user_provider.dart';
+import 'package:nidful/screens/message_lists.dart';
 import 'package:nidful/screens/notification.dart';
 import 'package:nidful/screens/explore_page.dart';
 import 'package:nidful/screens/home.dart';
@@ -23,12 +24,12 @@ class BottomBar extends StatefulWidget {
 
 class _BottomBarState extends State<BottomBar> {
   Timer? timer;
-  var notify;
+  var messages;
   @override
   void initState() {
     super.initState();
     addData();
-    getNotification();
+    getMessages();
   }
 
   addData() async {
@@ -36,31 +37,32 @@ class _BottomBarState extends State<BottomBar> {
     await _userProvider.refreshUser();
   }
 
-  getNotification() async {
+  getMessages() async {
     var data = FirebaseFirestore.instance
-        .collection('notifications')
+        .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('userNotifications')
+        .collection('messages')
         .where('read', isEqualTo: false)
         .snapshots();
     data.listen((event) {
+      print(event.docs.length);
       setState(() {
-        notify = event.docs.length;
+        messages = event.docs.length;
       });
     });
-    // setState(() {
-    //   // get length of data
-    //   notify = 3;
-    //   // print((data as dynamic).docs.length);
-    // });
   }
+  // setState(() {
+  //   // get length of data
+  //   notify = 3;
+  //   // print((data as dynamic).docs.length);
+  // });
 
   var index = 0;
 
   final screens = [
     HomePage(),
     ExplorePage(),
-    NotificationPage(),
+    MessageList(),
     ProfilePage(uid: FirebaseAuth.instance.currentUser!.uid),
   ];
 
@@ -116,12 +118,12 @@ class _BottomBarState extends State<BottomBar> {
                         color: index == 2 ? primaryColor : Colors.transparent,
                       ),
                       child: SvgPicture.asset(
-                        'assets/NOTIFICATION.svg',
+                        'assets/MSG.svg',
                         semanticsLabel: 'NOTIFICATION',
                         color: index == 2 ? Colors.white : primaryColor,
                       ),
                     ),
-                    notify == 0
+                    messages == 0
                         ? Text('')
                         : Positioned(
                             right: 0,
@@ -133,7 +135,7 @@ class _BottomBarState extends State<BottomBar> {
                                 color: Colors.red,
                               ),
                               child: Text(
-                                notify.toString(),
+                                messages.toString(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,

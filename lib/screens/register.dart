@@ -69,142 +69,121 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height / 2.5,
-              child: Stack(
-                alignment: Alignment.center,
-                // fit: StackFit.expand,
-                overflow: Overflow.visible,
-                children: [
-                  Positioned(
-                    top: MediaQuery.of(context).size.height * 0.001 * -5,
-                    right: MediaQuery.of(context).size.width / 1000 * -0,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 1.1,
-                      height: MediaQuery.of(context).size.height * 0.45,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: AssetImage('assets/slide3.png'),
-                        ),
-                      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: ScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // SizedBox(height: MediaQuery.of(context).size.height * 1 / 20),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Create an Account',
+                      style: GoogleFonts.workSans(
+                          color: Colors.black,
+                          fontSize: 23,
+                          fontWeight: FontWeight.w500),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 1 / 20),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Create an Account',
-                    style: GoogleFonts.workSans(
-                        color: Colors.black,
-                        fontSize: 23,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    'Create an account to continue an awesome experience',
-                    style: GoogleFonts.workSans(color: Colors.black),
-                  ),
-                  // SizedBox(
-                  //   height: 30,
-                  // ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  InputWidget(
-                    height: MediaQuery.of(context).size.height / 13,
-                    controller: _usernameController,
-                    label: 'Username',
-                    hint: 'johndoe',
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  InputWidget(
-                    height: MediaQuery.of(context).size.height / 13,
-                    controller: _emailController,
-                    label: 'Email Address',
-                    hint: 'johndoe@email.com',
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  InputWidget(
-                    height: MediaQuery.of(context).size.height / 13,
-                    controller: _passwordController,
-                    label: 'Password',
-                    isObscure: true,
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 20,
-                  ),
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        Get.to(() => BottomBar());
-                      },
-                      child: InkWell(
-                        onTap: signUpUser,
-                        child: Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height / 13,
-                          decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Center(
-                            child: _isLoading
-                                ? Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : Text(
-                                    'Create Account',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Get.to(() => LoginPage());
-                    },
-                    child: RichText(
-                        text: TextSpan(
-                      text: 'Already have an account? ',
+                    SizedBox(height: 15),
+                    Text(
+                      'Create an account to continue an awesome experience',
                       style: GoogleFonts.workSans(color: Colors.black),
-                      children: [
-                        TextSpan(
-                          text: 'Login',
-                          style: GoogleFonts.workSans(
-                            color: primaryColor,
-                            fontWeight: FontWeight.bold,
+                    ),
+                    // SizedBox(
+                    //   height: 30,
+                    // ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    InputWidget(
+                      height: MediaQuery.of(context).size.height / 13,
+                      controller: _usernameController,
+                      label: 'Username',
+                      hint: 'johndoe',
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    InputWidget(
+                      height: MediaQuery.of(context).size.height / 13,
+                      controller: _emailController,
+                      label: 'Email Address',
+                      hint: 'johndoe@email.com',
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    InputWidget(
+                      height: MediaQuery.of(context).size.height / 13,
+                      controller: _passwordController,
+                      label: 'Password',
+                      isObscure: true,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 20,
+                    ),
+                    Center(
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(() => BottomBar());
+                        },
+                        child: InkWell(
+                          onTap: signUpUser,
+                          child: Container(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height / 13,
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Center(
+                              child: _isLoading
+                                  ? Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Create Account',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                            ),
                           ),
                         ),
-                      ],
-                    )),
-                  ),
-                ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.to(() => LoginPage());
+                      },
+                      child: RichText(
+                          text: TextSpan(
+                        text: 'Already have an account? ',
+                        style: GoogleFonts.workSans(color: Colors.black),
+                        children: [
+                          TextSpan(
+                            text: 'Login',
+                            style: GoogleFonts.workSans(
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

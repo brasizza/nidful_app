@@ -54,8 +54,13 @@ class _ItemListState extends State<ItemList> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.snap['title'],
-                      style: TextStyle(color: primaryColor, fontSize: 20.sp),
+                      widget.snap['title'].length > 15
+                          ? widget.snap['title'].substring(0, 15) + '...'
+                          : widget.snap['title'],
+                      style: TextStyle(
+                        color: primaryColor,
+                        fontSize: 20.sp,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),

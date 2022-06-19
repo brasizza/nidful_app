@@ -41,12 +41,12 @@ class CatLList extends StatelessWidget {
         child: FutureBuilder(
           future: FirebaseFirestore.instance
               .collection('products')
-              .where('category', isGreaterThanOrEqualTo: search)
+              .where('category', isEqualTo: search)
               .get(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: Text('No products found under ${search}'),
               );
             }
             return ListView.builder(

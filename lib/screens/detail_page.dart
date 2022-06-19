@@ -30,6 +30,8 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   var userData = {};
+  var posterData = {};
+  var getterData = [];
   bool isFollowing = false;
 
   @override
@@ -37,6 +39,58 @@ class _DetailPageState extends State<DetailPage> {
     // TODO: implement initState
     super.initState();
     getData();
+    getPoster();
+    getVetter();
+  }
+
+  getPoster() async {
+    setState(() {
+      isLoading = true;
+    });
+    var userSnap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.snap['uid'])
+        .get();
+    // return userSnap.data()!;
+    setState(() {
+      posterData = userSnap.data()!;
+      // print(posterData);
+      isLoading = false;
+    });
+  }
+
+  Future<List> getVetter() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('vets')
+          .where('postId', isEqualTo: widget.snap['postId'])
+          .get();
+      List vetData = snap.docs.map((doc) => doc.data()).toList();
+      if (vetData != null) {
+        // get vet data
+        vetData.forEach((f) {
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(f['requester'])
+              .get()
+              .then((doc) {
+            if (doc.exists) {
+              // print(followers.length);
+              // followers = [...followers, doc.data()];
+              getterData.add(doc.data());
+              setState(() {
+                getterData = getterData;
+              });
+              // pass followers
+              // return followers;
+            }
+          });
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+    return getterData;
   }
 
   getData() async {
@@ -64,243 +118,322 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     model.User user = Provider.of<UserProvider>(context).getUser;
-    return Scaffold(
-      appBar: ScrollAppBar(
-        controller: controller,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-            size: 20,
-          ),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          widget.snap['title'],
-          style: GoogleFonts.workSans(
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-      body: Snap(
-        controller: controller.appBar,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Get.to(() => ProfilePage(uid: widget.snap['uid']));
-                          },
-                          child: widget.snap['profImage'] == ""
-                              ? CircleAvatar(
-                                  // minRadius: 50,
-                                  // maxRadius: 50,
-                                  // generate random background color
-                                  backgroundColor: Colors.primaries[Random()
-                                      .nextInt(Colors.primaries.length)],
-                                  child: Center(
-                                    child: Text(
-                                      userData['username']
-                                          .toUpperCase()
-                                          .substring(0, 1),
-                                      style: GoogleFonts.workSans(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 30,
+    return isLoading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            appBar: ScrollAppBar(
+              controller: controller,
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                onPressed: () {
+                  Get.back();
+                },
+              ),
+              centerTitle: true,
+              title: Text(
+                widget.snap['title'],
+                style: GoogleFonts.workSans(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            body: Snap(
+              controller: controller.appBar,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Get.to(() =>
+                                      ProfilePage(uid: widget.snap['uid']));
+                                },
+                                child: posterData['photoUrl'] == ""
+                                    ? CircleAvatar(
+                                        // minRadius: 50,
+                                        // maxRadius: 50,
+                                        // generate random background color
+                                        backgroundColor: Colors.primaries[
+                                            Random().nextInt(
+                                                Colors.primaries.length)],
+                                        child: Center(
+                                          child: Text(
+                                            posterData['username']
+                                                .toUpperCase()
+                                                .substring(0, 1),
+                                            style: GoogleFonts.workSans(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            posterData['photoUrl']),
                                       ),
-                                    ),
+                              ),
+                              SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    posterData['username'],
+                                    style: GoogleFonts.workSans(
+                                        fontWeight: FontWeight.w500),
                                   ),
-                                )
-                              : CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(widget.snap['profImage']),
-                                ),
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                                  // Text(
+                                  //   'We rise by lifting others!',
+                                  //   style: GoogleFonts.workSans(),
+                                  // ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          FirebaseAuth.instance.currentUser!.uid !=
+                                  userData['uid']
+                              ? isFollowing
+                                  ? FollowButton(
+                                      function: () async {
+                                        await FireStoreMethods().followUser(
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid,
+                                          userData['uid'],
+                                        );
+                                        setState(() {
+                                          isFollowing = false;
+                                        });
+                                      },
+                                      label: 'Following',
+                                    )
+                                  : FollowButton(
+                                      label: 'Follow',
+                                      function: () async {
+                                        await FireStoreMethods().followUser(
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid,
+                                          userData['uid'],
+                                        );
+                                        setState(() {
+                                          isFollowing = true;
+                                        });
+                                      },
+                                    )
+                              : Container(),
+                        ],
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04),
+                      Center(
+                        child: Column(
                           children: [
-                            Text(
-                              widget.snap['username'],
-                              style: GoogleFonts.workSans(
-                                  fontWeight: FontWeight.w500),
+                            ClipRRect(
+                              child: Image.network(
+                                widget.snap['postUrl'],
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.57,
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            // Text(
-                            //   'We rise by lifting others!',
-                            //   style: GoogleFonts.workSans(),
-                            // ),
+                            SizedBox(height: 20),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () async {
+                                              await FireStoreMethods()
+                                                  .likeProduct(
+                                                widget.snap['postId'],
+                                                user.uid,
+                                                widget.snap['uid'],
+                                                widget.snap['likes'],
+                                                user.username,
+                                                user.photoUrl,
+                                                widget.snap['postUrl'],
+                                              );
+                                              // setState(() {
+                                              //   widget.snap['likes'] = int.parse(
+                                              //           widget.snap['likes'].length) +
+                                              //       1;
+                                              // });
+                                            },
+                                            child: SvgPicture.asset(
+                                              'assets/LIKE.svg',
+                                              color: widget.snap['likes']
+                                                      .contains(
+                                                          widget.snap['uid'])
+                                                  ? Colors.red
+                                                  : Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${widget.snap['likes'].length.toString()}',
+                                            style: GoogleFonts.workSans(
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(width: 15),
+                                      SvgPicture.asset(
+                                        'assets/SHARE.svg',
+                                        color: Colors.black,
+                                      ),
+                                    ],
+                                  ),
+                                  SvgPicture.asset(
+                                    'assets/BOOKMARK.svg',
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ],
-                    ),
-                    FirebaseAuth.instance.currentUser!.uid != userData['uid']
-                        ? isFollowing
-                            ? FollowButton(
-                                function: () async {
-                                  await FireStoreMethods().followUser(
-                                    FirebaseAuth.instance.currentUser!.uid,
-                                    userData['uid'],
-                                  );
-                                  setState(() {
-                                    isFollowing = false;
-                                  });
-                                },
-                                label: 'Following',
-                              )
-                            : FollowButton(
-                                label: 'Follow',
-                                function: () async {
-                                  await FireStoreMethods().followUser(
-                                    FirebaseAuth.instance.currentUser!.uid,
-                                    userData['uid'],
-                                  );
-                                  setState(() {
-                                    isFollowing = true;
-                                  });
-                                },
-                              )
-                        : Container(),
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                Center(
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        child: Image.network(
-                          widget.snap['postUrl'],
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.57,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.5),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.snap['title'],
+                                style: GoogleFonts.workSans(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 17,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                widget.snap['description'],
+                                style: GoogleFonts.workSans(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ]),
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      // FutureBuilder(
+                      //   future: getVetter(),
+                      //   builder: (context, snapshot) {
+                      //     if (snapshot.connectionState ==
+                      //         ConnectionState.waiting) {
+                      //       return Center(
+                      //         child: CircularProgressIndicator(),
+                      //       );
+                      //     }
+                      //     return
+                      //   },
+                      // ),
+                      ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        physics: BouncingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: getterData.length,
+                        itemBuilder: (context, snapshot) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
+                                Row(
                                   children: [
-                                    GestureDetector(
-                                      onTap: () async {
-                                        await FireStoreMethods().likeProduct(
-                                          widget.snap['postId'],
-                                          user.uid,
-                                          widget.snap['uid'],
-                                          widget.snap['likes'],
-                                          user.username,
-                                          user.photoUrl,
-                                          widget.snap['postUrl'],
-                                        );
-                                        // setState(() {
-                                        //   widget.snap['likes'] = int.parse(
-                                        //           widget.snap['likes'].length) +
-                                        //       1;
-                                        // });
-                                      },
-                                      child: SvgPicture.asset(
-                                        'assets/LIKE.svg',
-                                        color: widget.snap['likes']
-                                                .contains(widget.snap['uid'])
-                                            ? Colors.red
-                                            : Colors.grey,
-                                      ),
-                                    ),
+                                    getterData[snapshot]['photoUrl'] == ''
+                                        ? InkWell(
+                                            onTap: () {
+                                              Get.to(
+                                                () => ProfilePage(
+                                                  uid: (getterData[snapshot]
+                                                      ['uid']),
+                                                ),
+                                              );
+                                            },
+                                            child: CircleAvatar(
+                                              // minRadius: 50,
+                                              // maxRadius: 50,
+                                              // generate random background color
+                                              backgroundColor: Colors.primaries[
+                                                  Random().nextInt(
+                                                      Colors.primaries.length)],
+                                              child: Center(
+                                                child: Text(
+                                                  getterData[snapshot]
+                                                          ['username']
+                                                      .toUpperCase()
+                                                      .substring(0, 1),
+                                                  style: GoogleFonts.workSans(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 30,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : InkWell(
+                                            onTap: () {
+                                              Get.to(
+                                                () => ProfilePage(
+                                                    uid: getterData[snapshot]
+                                                        ['uid']),
+                                              );
+                                            },
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  getterData[snapshot]
+                                                      ['photoUrl']),
+                                            ),
+                                          ),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
                                     Text(
-                                      '${widget.snap['likes'].length.toString()}',
+                                      getterData[snapshot]['username'],
                                       style: GoogleFonts.workSans(
-                                          fontWeight: FontWeight.w500),
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(width: 15),
-                                SvgPicture.asset(
-                                  'assets/SHARE.svg',
-                                  color: Colors.black,
-                                ),
-                              ],
-                            ),
-                            SvgPicture.asset(
-                              'assets/BOOKMARK.svg',
-                              color: Colors.black,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.5),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.snap['title'],
-                          style: GoogleFonts.workSans(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 17,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          widget.snap['description'],
-                          style: GoogleFonts.workSans(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ]),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                FutureBuilder(
-                  future: FirebaseFirestore.instance
-                      .collection('vets')
-                      .where('postId', isEqualTo: widget.snap['postId'])
-                      .get(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      physics: BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: (snapshot.data! as dynamic).docs.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Slidable(
-                            endActionPane: ActionPane(
-                              motion: StretchMotion(),
-                              children: [
                                 FirebaseAuth.instance.currentUser!.uid ==
                                         widget.snap['uid']
-                                    ? SlidableAction(
-                                        onPressed: ((context) async {
+                                    ? FollowButton(
+                                        function: () async {
                                           setState(() {
                                             isLoading = true;
                                           });
@@ -308,14 +441,10 @@ class _DetailPageState extends State<DetailPage> {
                                               .itemPingAccept(
                                             postId: widget.snap['postId'],
                                             uid: user.uid,
-                                            requester:
-                                                (snapshot.data! as dynamic)
-                                                    .docs[index]
-                                                    .data()['requester'],
-                                            username:
-                                                (snapshot.data! as dynamic)
-                                                    .docs[index]
-                                                    .data()['username'],
+                                            requester: getterData[snapshot]
+                                                ['uid'],
+                                            username: getterData[snapshot]
+                                                ['username'],
                                             giver: user.username,
                                           );
                                           setState(() {
@@ -339,7 +468,7 @@ class _DetailPageState extends State<DetailPage> {
                                             //     context);
                                             Get.snackbar(
                                               'Success',
-                                              'Request sent to ${(snapshot.data! as dynamic).docs[index].data()['username']}',
+                                              'Request sent to ${getterData[snapshot]['username']}',
                                               backgroundColor: Colors.green,
                                               colorText: Colors.white,
                                               snackPosition:
@@ -349,124 +478,25 @@ class _DetailPageState extends State<DetailPage> {
                                               padding: EdgeInsets.all(10),
                                             );
                                           }
-                                        }),
-                                        backgroundColor: Colors.greenAccent,
-                                        label:
-                                            isLoading ? 'Sending.....' : 'Give',
+                                        },
+                                        label: isLoading
+                                            ? 'Sending......'
+                                            : 'Give Item',
                                       )
-                                    : Text(''),
-                                FirebaseAuth.instance.currentUser!.uid ==
-                                        widget.snap['uid']
-                                    ? SlidableAction(
-                                        onPressed: ((context) async {
-                                          setState(() {
-                                            isLoadingReject = true;
-                                          });
-                                          await FireStoreMethods()
-                                              .itemPingReject(
-                                            postId: widget.snap['postId'],
-                                            uid: widget.snap['uid'],
-                                            requester: FirebaseAuth
-                                                .instance.currentUser!.uid,
-                                            username: user.username,
-                                            giver: widget.snap['username'],
-                                          );
-                                          showSnackBar(
-                                              'Request rejected', context);
-                                          setState(() {
-                                            isLoadingReject = false;
-                                          });
-                                        }),
-                                        backgroundColor: Colors.redAccent,
-                                        label: isLoadingReject
-                                            ? 'Sending...'
-                                            : 'Reject',
-                                      )
-                                    : Text(''),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    (snapshot.data! as dynamic).docs[index]
-                                                ['photoUrl'] ==
-                                            ''
-                                        ? InkWell(
-                                            onTap: () {
-                                              Get.to(
-                                                () => ProfilePage(
-                                                    uid: (snapshot.data!
-                                                                as dynamic)
-                                                            .docs[index]
-                                                        ['requester']),
-                                              );
-                                            },
-                                            child: CircleAvatar(
-                                              // minRadius: 50,
-                                              // maxRadius: 50,
-                                              // generate random background color
-                                              backgroundColor: Colors.primaries[
-                                                  Random().nextInt(
-                                                      Colors.primaries.length)],
-                                              child: Center(
-                                                child: Text(
-                                                  userData['username']
-                                                      .toUpperCase()
-                                                      .substring(0, 1),
-                                                  style: GoogleFonts.workSans(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 30,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : InkWell(
-                                            onTap: () {
-                                              Get.to(
-                                                () => ProfilePage(
-                                                    uid: (snapshot.data!
-                                                                as dynamic)
-                                                            .docs[index]
-                                                        ['requester']),
-                                              );
-                                            },
-                                            child: CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  (snapshot.data! as dynamic)
-                                                      .docs[index]['photoUrl']),
-                                            ),
-                                          ),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.02),
-                                    Text(
-                                      (snapshot.data! as dynamic).docs[index]
-                                          ['username'],
-                                      style: GoogleFonts.workSans(
-                                        fontWeight: FontWeight.w500,
+                                    : FollowButton(
+                                        label: 'Requested',
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                FollowButton(label: 'Requested'),
                               ],
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                          );
+                        },
+                      ),
+                      // );
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 }

@@ -15,6 +15,7 @@ import 'package:nidful/providers/user_provider.dart';
 import 'package:nidful/screens/cat_list.dart';
 import 'package:nidful/screens/catt_list.dart';
 import 'package:nidful/screens/message_lists.dart';
+import 'package:nidful/screens/notification.dart';
 import 'package:nidful/screens/post_product.dart';
 import 'package:nidful/service/not.dart';
 import 'package:nidful/widgets/category_grid.dart';
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   var catData = {};
   final TextEditingController searchController = TextEditingController();
   bool isLoading = false;
-  var messages;
+  var notify;
 
   @override
   void dispose() {
@@ -63,20 +64,19 @@ class _HomePageState extends State<HomePage> {
     });
 
     storeNotificationToken();
-    getMessages();
+    getNotification();
   }
 
-  getMessages() async {
+  getNotification() async {
     var data = FirebaseFirestore.instance
-        .collection('users')
+        .collection('notifications')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('messages')
+        .collection('userNotifications')
         .where('read', isEqualTo: false)
         .snapshots();
     data.listen((event) {
-      print(event.docs.length);
       setState(() {
-        messages = event.docs.length;
+        notify = event.docs.length;
       });
     });
   }
@@ -138,14 +138,14 @@ class _HomePageState extends State<HomePage> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        Get.to(() => MessageList());
+                                        Get.to(() => NotificationPage());
                                       },
                                       child: CircleIcon(
                                         isSvg: true,
-                                        icon: 'assets/MSG.svg',
+                                        icon: 'assets/NOTIFICATION.svg',
                                       ),
                                     ),
-                                    messages == 0
+                                    notify == 0
                                         ? Container()
                                         : Positioned(
                                             top: 0,
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                               child: Center(
                                                 child: Text(
-                                                  messages.toString(),
+                                                  notify.toString(),
                                                   style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 8),
